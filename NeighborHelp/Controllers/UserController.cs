@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NeighborHelp.Controllers.Consts;
 using NeighborHelp.Models;
+using NeighborHelp.Models.Consts;
 using NeighborHelp.Services.Contracts;
 using System;
 using System.Collections.Generic;
@@ -32,8 +34,9 @@ namespace NeighborHelp.Controllers
             }
         }
 
-        //TODO authorized role
-        [HttpGet(UserControllerConsts.GET_CURRENT_USER)]
+        [Authorize]
+        [ActionName(UserControllerConsts.GET_CURRENT_USER)]
+        [HttpGet]
         public IActionResult GetUser()
         {
             int id = -1;//TODO get current user id
@@ -49,9 +52,10 @@ namespace NeighborHelp.Controllers
             }
         }
 
-        //TODO admin role
-        [HttpGet(UserControllerConsts.GET_USER)]
-        public IActionResult GetUser(string id)
+        [Authorize(Roles =UserRoles.ADMIN)]
+        [ActionName((UserControllerConsts.GET_USER))]
+        [HttpGet]
+        public IActionResult GetUser(int id)
         {
             var user = _userDirectory.GetUser(id);
 
@@ -65,8 +69,9 @@ namespace NeighborHelp.Controllers
             }
         }
 
-        //TODO admin role
-        [HttpGet(UserControllerConsts.GET_USERS)]
+        [Authorize(Roles = UserRoles.ADMIN)]
+        [ActionName(UserControllerConsts.GET_USERS)]
+        [HttpGet]
         public IActionResult GetUsers()
         {
             var users = _userDirectory.GetUsers();
@@ -81,8 +86,9 @@ namespace NeighborHelp.Controllers
             }
         }
 
-        //TODO authorized role
-        [HttpPut(UserControllerConsts.PUT_USER)]
+        [Authorize]
+        [ActionName(UserControllerConsts.PUT_USER)]
+        [HttpPut]
         public IActionResult PutUser(User user)
         {
             if (user == null)
@@ -102,8 +108,9 @@ namespace NeighborHelp.Controllers
             }
         }
 
-        [HttpPost(UserControllerConsts.ADD_USER)]
-        public IActionResult PostUser(User user)
+        [ActionName(UserControllerConsts.ADD_USER)]
+        [HttpPost]
+        public IActionResult AddUser(User user)
         {
             if (user == null)
             {
