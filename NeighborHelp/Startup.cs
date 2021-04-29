@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +18,12 @@ namespace NeighborHelp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddAuthentication();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = new PathString("/Authentification/Login");
+                    options.AccessDeniedPath = new PathString("/Authentification/Login");
+                });
             services.AddAuthorization();
 
             var directoryService = new MemoryUserOrderDirectory();
@@ -33,6 +39,10 @@ namespace NeighborHelp
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
+            app.UseHttpsRedirection();
             app.UseRouting();
 
             app.UseAuthentication();
@@ -40,10 +50,7 @@ namespace NeighborHelp
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                endpoints.MapControllers();
             });
         }
     }

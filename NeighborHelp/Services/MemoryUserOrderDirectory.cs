@@ -22,6 +22,7 @@ namespace NeighborHelp.Services
 
             FillUsers();
             FillOrders(Users.FirstOrDefault());
+            FillOrders2(Users.LastOrDefault());
         }
 
         private void FillUsers()
@@ -51,7 +52,44 @@ namespace NeighborHelp.Services
                 Cost = 50
             };
 
+            var userOrder2 = new Order()
+            {
+                Author = user,
+                AuthorID = user.Id,
+                OrderType = OrderTypes.BUY,
+                Product = "Грамофон",
+                ProductDescription = "Рабочий. Для проигрывания виниловых пластинок, можно полностью механический",
+                Cost = 80
+            };
+
             TryAddOrder(userOrder);
+            TryAddOrder(userOrder2);
+        }
+
+        private void FillOrders2(User user)
+        {
+            var userOrder = new Order()
+            {
+                Author = user,
+                AuthorID = user.Id,
+                OrderType = OrderTypes.SELL,
+                Product = "Капуста",
+                ProductDescription = "Среднего размера. Хорошее качество. Для засолки",
+                Cost = 3
+            };
+
+            var userOrder2 = new Order()
+            {
+                Author = user,
+                AuthorID = user.Id,
+                OrderType = OrderTypes.BUY,
+                Product = "3 литровые банки",
+                ProductDescription = "Стреклянные банки 3 литра. б/у. Без сколов и трещин. Под закатки",
+                Cost = 3
+            };
+
+            TryAddOrder(userOrder);
+            TryAddOrder(userOrder2);
         }
 
         #region IOrderDirectoryServise implementation
@@ -69,8 +107,8 @@ namespace NeighborHelp.Services
             else
             {
                 order.Status = OrderStatus.INITIALIZE;
-                int lastID = Orders.Last()?.ID ?? 0;
-                order.ID = lastID++;
+                int lastID = Orders.LastOrDefault()?.ID ?? 0;
+                order.ID = ++lastID;
                 Orders.Add(order);
 
                 return true;
@@ -122,8 +160,8 @@ namespace NeighborHelp.Services
             }
             else
             {
-                int lastID = Users.Last()?.Id ?? 0;
-                user.Id = lastID++;
+                int lastID = Users.LastOrDefault()?.Id ?? 0;
+                user.Id = ++lastID;
                 Users.Add(user);
                 UpdateRoles(user);
 
@@ -135,16 +173,21 @@ namespace NeighborHelp.Services
         {
             var role = Roles.FirstOrDefault(r => r.Name == user.Role?.Name);
 
-            if (role != null 
-                && !role.Users.Any(u => u.Id == user.Id))
-            {
-                role.Users.Add(user);
-            }
+            //if (role != null 
+            //    && !role.Users.Any(u => u.Id == user.Id))
+            //{
+            //    role.Users.Add(user);
+            //}
         }
 
         public User GetUser(int id)
         {
             return Users.FirstOrDefault(u => u.Id == id);
+        }
+
+        public User GetUser(string login, string password)
+        {
+            return Users.FirstOrDefault(u => u.Login == login && u.Password == password);
         }
 
         public IList<User> GetUsers()

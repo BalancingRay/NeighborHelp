@@ -10,6 +10,8 @@ namespace NeighborHelp.Services.Contracts
     {
         public bool TryAddUser(User user);
         public User GetUser(int id);
+
+        public User GetUser(string login, string password);
         public IList<User> GetUsers();
         public bool TryPutUser(User user);
     }

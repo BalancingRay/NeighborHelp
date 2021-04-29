@@ -10,11 +10,11 @@ namespace NeighborHelp.Models
         public int ID { set; get; }
         public string Name { set; get; }
 
-        public List<User> Users { set; get; }
+        //public List<User> Users { set; get; }
 
-        public Role()
-        {
-            Users = new List<User>();
-        }
+        //public Role()
+        //{
+        //    Users = new List<User>();
+        //}
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NeighborHelp.Controllers.Consts;
 using NeighborHelp.Models;
@@ -7,10 +9,13 @@ using NeighborHelp.Services.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace NeighborHelp.Controllers
 {
+    [ApiController]
+    [Route("api/[Controller]/[Action]")]
     public class UserController : Controller
     {
         private IUserDirectoryServise _userDirectory;
@@ -20,31 +25,22 @@ namespace NeighborHelp.Controllers
             _userDirectory = service;
         }
 
-        public IActionResult Login(User user)
+        [HttpGet,
+         Authorize,
+         ActionName(UserControllerConsts.GET_CURRENT_USER)]
+        public ActionResult<User> GetCurrent()
         {
-            bool authorizationResult = true;
+            var claimId = HttpContext.User.Claims.FirstOrDefault(cl => cl.Type == ClaimsIdentity.DefaultNameClaimType)?.Value;
+            User user = null;
 
-            if (authorizationResult)
+            if (int.TryParse(claimId, out int id))
             {
-                return new OkResult();
+                user = _userDirectory.GetUser(id);
             }
-            else
-            {
-                return new NotFoundResult();
-            }
-        }
-
-        [Authorize]
-        [ActionName(UserControllerConsts.GET_CURRENT_USER)]
-        [HttpGet]
-        public IActionResult GetUser()
-        {
-            int id = -1;//TODO get current user id
-            var user = _userDirectory.GetUser(id);
 
             if (user != null)
             {
-                return new JsonResult(user);
+                return new ObjectResult(user);
             }
             else
             {
@@ -52,16 +48,16 @@ namespace NeighborHelp.Controllers
             }
         }
 
-        [Authorize(Roles =UserRoles.ADMIN)]
-        [ActionName((UserControllerConsts.GET_USER))]
-        [HttpGet]
-        public IActionResult GetUser(int id)
+        [HttpGet("{id}"),
+         Authorize(Roles =UserRoles.ADMIN),
+         ActionName((UserControllerConsts.GET_USER))]
+        public ActionResult<User> Get(int id)
         {
             var user = _userDirectory.GetUser(id);
 
             if (user != null)
             {
-                return new JsonResult(user);
+                return new ObjectResult(user);
             }
             else
             {
@@ -69,16 +65,17 @@ namespace NeighborHelp.Controllers
             }
         }
 
-        [Authorize(Roles = UserRoles.ADMIN)]
-        [ActionName(UserControllerConsts.GET_USERS)]
-        [HttpGet]
-        public IActionResult GetUsers()
+        [HttpGet,
+         Authorize(Roles = UserRoles.ADMIN),
+         ActionName(UserControllerConsts.GET_USERS)]
+
+        public ActionResult<IEnumerable<User>> GetAll()
         {
             var users = _userDirectory.GetUsers();
 
             if (users != null)
             {
-                return new JsonResult(users);
+                return new ActionResult<IEnumerable<User>>(users);
             }
             else
             {
@@ -87,9 +84,9 @@ namespace NeighborHelp.Controllers
         }
 
         [Authorize]
-        [ActionName(UserControllerConsts.PUT_USER)]
+        [ActionName(UserControllerConsts.UPDATE_USER)]
         [HttpPut]
-        public IActionResult PutUser(User user)
+        public ActionResult<User> Put(User user)
         {
             if (user == null)
             {
@@ -100,17 +97,17 @@ namespace NeighborHelp.Controllers
 
             if (succeed)
             {
-                return new OkResult();
+                return new OkObjectResult(user);
             }
             else
             {
-                return new NoContentResult();
+                return new BadRequestResult();
             }
         }
 
         [ActionName(UserControllerConsts.ADD_USER)]
         [HttpPost]
-        public IActionResult AddUser(User user)
+        public ActionResult<User> Post(User user)
         {
             if (user == null)
             {
@@ -121,13 +118,12 @@ namespace NeighborHelp.Controllers
 
             if (succeed)
             {
-                return new OkResult();
+                return new OkObjectResult(user);
             }
             else
             {
-                return new NoContentResult();
+                return new BadRequestResult();
             }
         }
-
     }
 }
