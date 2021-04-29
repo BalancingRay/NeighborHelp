@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeighborHelp", "NeighborHelp\NeighborHelp.csproj", "{C21EC623-28CA-4ABF-B876-20A864F821BA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C21EC623-28CA-4ABF-B876-20A864F821BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C21EC623-28CA-4ABF-B876-20A864F821BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C21EC623-28CA-4ABF-B876-20A864F821BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C21EC623-28CA-4ABF-B876-20A864F821BA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F236CE0E-A9E5-49A6-8683-9DD0A604E241}
+	EndGlobalSection
+EndGlobal
