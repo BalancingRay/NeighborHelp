@@ -11,18 +11,32 @@ namespace NeighborHelp.Services
     public class MemoryUserClaimDirectory: IUserDirectoryServise, IClaimDirectoryServise
     {
         private List<User> Users;
+        private List<Role> Roles;
         private List<Claim> Claims;
 
         public MemoryUserClaimDirectory()
         {
             Users = new List<User>();
             Claims = new List<Claim>();
+            Roles = new List<Role>();
+
+            FillUsers();
+            FillClaims(Users.FirstOrDefault());
         }
 
         private void FillUsers()
         {
-            var admin = new User() { Login = "admin", Password = "admin", Role = "ADMIN", UserName = "Admin" };
-            var user = new User() { Login = "user1", Password = "1234", Role = "USER", UserName = "TestUser" };
+            var userRole = new Role() { Name = UserRoles.USER, ID=0 };
+            var adminRole = new Role() { Name = UserRoles.ADMIN, ID=1 };
+
+            Roles.Add(userRole);
+            Roles.Add(adminRole);
+
+            var admin = new User() { Login = "admin", Password = "admin", Role = adminRole, RoleId = adminRole.ID, UserName = "Admin" };
+            var user = new User() { Login = "user1", Password = "1234", Role = userRole, RoleId = userRole.ID, UserName = "TestUser" };
+
+            TryAddUser(admin);
+            TryAddUser(user);
         }
 
         private void FillClaims(User user)
@@ -30,7 +44,7 @@ namespace NeighborHelp.Services
             var userClaim = new Claim()
             {
                 Author = user,
-                AuthorID = user.ID,
+                AuthorID = user.Id,
                 ClaimType = ClaimTypes.SELL,
                 Product = "Диван, б/у",
                 ProductDescription = "Коричневый, мягкая обивка, состояние 7 из 10",
@@ -67,7 +81,7 @@ namespace NeighborHelp.Services
 
         public IList<Claim> GetClaims(int userId)
         {
-            return Claims.Where(cl => cl.Author.ID == userId).ToList();
+            return Claims.Where(cl => cl.Author.Id == userId).ToList();
         }
 
         public IList<Claim> GetAllClaims()
@@ -105,17 +119,29 @@ namespace NeighborHelp.Services
             }
             else
             {
-                int lastID = Users.Last()?.ID ?? 0;
-                user.ID = lastID++;
+                int lastID = Users.Last()?.Id ?? 0;
+                user.Id = lastID++;
                 Users.Add(user);
+                UpdateRoles(user);
 
                 return true;
             }
         }
 
+        private void UpdateRoles(User user)
+        {
+            var role = Roles.FirstOrDefault(r => r.Name == user.Role?.Name);
+
+            if (role != null 
+                && !role.Users.Any(u => u.Id == user.Id))
+            {
+                role.Users.Add(user);
+            }
+        }
+
         public User GetUser(int id)
         {
-            return Users.FirstOrDefault(u => u.ID == id);
+            return Users.FirstOrDefault(u => u.Id == id);
         }
 
         public IList<User> GetUsers()
@@ -126,7 +152,7 @@ namespace NeighborHelp.Services
         public bool TryPutUser(User user)
         {
             var oldUser = Users.FirstOrDefault( u => (u.Login == user?.Login 
-                                                && u.ID == user?.ID));
+                                                && u.Id == user?.Id));
 
             if (oldUser !=null)
             {

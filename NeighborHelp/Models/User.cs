@@ -7,11 +7,13 @@ namespace NeighborHelp.Models
 {
     public class User
     {
-        public int ID { set; get; }
+        public int Id { set; get; }
         public string Login { set; get; }
         public string UserName { set; get; }
         public string Password { set; get; }
-        public string Role { set; get; }
+
+        public int? RoleId { set; get; }
+        public Role Role { set; get; }
 
         public UserProfile Profile { set; get; }
 
