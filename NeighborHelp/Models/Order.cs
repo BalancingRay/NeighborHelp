@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace NeighborHelp.Models
 {
-    public class Claim
+    public class Order
     {
         public int ID { get; set; }
         public int AuthorID { set; get; }
@@ -16,7 +16,7 @@ namespace NeighborHelp.Models
         public string ProductDescription { set; get; }
         public double Cost { set; get; }
 
-        public string ClaimType { set; get; }
+        public string OrderType { set; get; }
 
         public string Status { get; set; }
     }

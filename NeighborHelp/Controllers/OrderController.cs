@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace NeighborHelp.Controllers
 {
-    public class ClaimController : Controller
+    public class OrderController : Controller
     {
-        private IClaimDirectoryServise _claimDirectory;
+        private IOrderDirectoryServise _orderDirectory;
 
-        public ClaimController(IClaimDirectoryServise service)
+        public OrderController(IOrderDirectoryServise service)
         {
-            _claimDirectory = service;
+            _orderDirectory = service;
         }
 
-        public IActionResult GetClaims()
+        public IActionResult GetOrders()
         {
             return View();
         } 

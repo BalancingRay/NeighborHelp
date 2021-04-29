@@ -8,20 +8,20 @@ using System.Threading.Tasks;
 
 namespace NeighborHelp.Services
 {
-    public class MemoryUserClaimDirectory: IUserDirectoryServise, IClaimDirectoryServise
+    public class MemoryUserOrderDirectory: IUserDirectoryServise, IOrderDirectoryServise
     {
         private List<User> Users;
         private List<Role> Roles;
-        private List<Claim> Claims;
+        private List<Order> Orders;
 
-        public MemoryUserClaimDirectory()
+        public MemoryUserOrderDirectory()
         {
             Users = new List<User>();
-            Claims = new List<Claim>();
+            Orders = new List<Order>();
             Roles = new List<Role>();
 
             FillUsers();
-            FillClaims(Users.FirstOrDefault());
+            FillOrders(Users.FirstOrDefault());
         }
 
         private void FillUsers()
@@ -39,64 +39,67 @@ namespace NeighborHelp.Services
             TryAddUser(user);
         }
 
-        private void FillClaims(User user)
+        private void FillOrders(User user)
         {
-            var userClaim = new Claim()
+            var userOrder = new Order()
             {
                 Author = user,
                 AuthorID = user.Id,
-                ClaimType = ClaimTypes.SELL,
+                OrderType = OrderTypes.SELL,
                 Product = "Диван, б/у",
                 ProductDescription = "Коричневый, мягкая обивка, состояние 7 из 10",
                 Cost = 50
             };
+
+            TryAddOrder(userOrder);
         }
 
-        #region IClaimDirectoryServise implementation
+        #region IOrderDirectoryServise implementation
 
-        public bool TryAddClaim(Claim claim)
+        public bool TryAddOrder(Order order)
         {
-            bool isClaimNotInitialized = 
-                string.IsNullOrWhiteSpace(claim?.Author?.Login) 
-                || string.IsNullOrWhiteSpace(claim?.Product);
+            bool isOrderNotInitialized = 
+                string.IsNullOrWhiteSpace(order?.Author?.Login) 
+                || string.IsNullOrWhiteSpace(order?.Product);
 
-            if (isClaimNotInitialized)
+            if (isOrderNotInitialized)
             {
                 return false;
             }
             else
             {
-                int lastID = Claims.Last()?.ID ?? 0;
-                claim.ID = lastID++;
-                Claims.Add(claim);
+                order.Status = OrderStatus.INITIALIZE;
+                int lastID = Orders.Last()?.ID ?? 0;
+                order.ID = lastID++;
+                Orders.Add(order);
 
                 return true;
             }
         }
 
-        public Claim GetClaim(int id)
+        public Order GetOrder(int id)
         {
-            return Claims.FirstOrDefault(cl => cl.ID == id);
+            return Orders.FirstOrDefault(cl => cl.ID == id);
         }
 
-        public IList<Claim> GetClaims(int userId)
+        public IList<Order> GetOrders(int userId)
         {
-            return Claims.Where(cl => cl.Author.Id == userId).ToList();
+            return Orders.Where(cl => cl.Author.Id == userId).ToList();
         }
 
-        public IList<Claim> GetAllClaims()
+        public IList<Order> GetAllOrders()
         {
-            return Claims.ToList();
+            return Orders.ToList();
         }
 
-        public bool TryPutClaim(Claim claim)
+        public bool TryPutOrder(Order order)
         {
-            var oldClaim = Claims.FirstOrDefault(cl => (cl.ID == claim.ID
-                                              && cl.AuthorID == claim?.AuthorID));
+            var oldOrder = Orders.FirstOrDefault(cl => (cl.ID == order.ID
+                                              && cl.AuthorID == order?.AuthorID));
 
-            if (oldClaim != null)
+            if (oldOrder != null)
             {
-                Claims[Claims.IndexOf(oldClaim)] = claim;
+                Orders[Orders.IndexOf(oldOrder)] = order;
 
                 return true;
             }
@@ -104,7 +107,7 @@ namespace NeighborHelp.Services
             return false;
         }
 
-        #endregion IClaimDirectoryServise implementation
+        #endregion IOrderDirectoryServise implementation
 
         #region IUserDirectoryServise implementation
 

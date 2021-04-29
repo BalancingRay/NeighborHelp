@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NeighborHelp.Services;
 using NeighborHelp.Services.Contracts;
 using System;
 using System.Collections.Generic;
@@ -19,8 +20,10 @@ namespace NeighborHelp
             services.AddAuthentication();
             services.AddAuthorization();
 
-            services.AddSingleton(typeof(IClaimDirectoryServise,);
-            services.AddSingleton(typeof(IUserDirectoryServise,);
+            var directoryService = new MemoryUserOrderDirectory();
+
+            services.AddSingleton(typeof(IOrderDirectoryServise), directoryService);
+            services.AddSingleton(typeof(IUserDirectoryServise), directoryService);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace NeighborHelp.Models.Consts
 {
-    public static class ClaimStatus
+    public static class OrderStatus
     {
         public const string INITIALIZE = "INITIALIZE";
         public const string ACTIVE = "ACTIVE";

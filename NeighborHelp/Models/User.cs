@@ -17,6 +17,6 @@ namespace NeighborHelp.Models
 
         public UserProfile Profile { set; get; }
 
-        public List<Claim> Claims { set; get; }
+        public List<Order> Orders { set; get; }
     }
 }
