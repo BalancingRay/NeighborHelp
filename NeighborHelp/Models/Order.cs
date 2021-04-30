@@ -9,8 +9,8 @@ namespace NeighborHelp.Models
     {
         public int ID { get; set; }
         public int AuthorID { set; get; }
-        public User Author { set; get; }
-        public User Client { set; get; }
+        public UserProfile Author { set; get; }
+        public UserProfile Client { set; get; }
 
         public string Product { set; get; }
         public string ProductDescription { set; get; }

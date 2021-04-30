@@ -9,9 +9,9 @@ namespace NeighborHelp.Controllers.Consts
     {
         public const string SIGNIN = "SIGNIN";
         public const string ADD_USER = "REGISTER";
-        public const string GET_USER = "GET";
-        public const string GET_CURRENT_USER = "GET_CURRENT";
-        public const string GET_USERS = "GET_ALL";
-        public const string UPDATE_USER = "UPDATE";
+        public const string GET_ACTION = "GET";
+        public const string GET_CURRENT_ACTION = "CURRENT";
+        public const string GET_ALL_ACTION = "ALL";
+        public const string UPDATE_ACTION = "UPDATE";
     }
 }

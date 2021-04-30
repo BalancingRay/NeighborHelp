@@ -27,8 +27,8 @@ namespace NeighborHelp.Controllers
 
         [HttpGet,
          Authorize,
-         ActionName(UserControllerConsts.GET_CURRENT_USER)]
-        public ActionResult<User> GetCurrent()
+         ActionName(UserControllerConsts.GET_CURRENT_ACTION)]
+        public ActionResult<User> Current()
         {
             var claimId = HttpContext.User.Claims.FirstOrDefault(cl => cl.Type == ClaimsIdentity.DefaultNameClaimType)?.Value;
             User user = null;
@@ -50,7 +50,7 @@ namespace NeighborHelp.Controllers
 
         [HttpGet("{id}"),
          Authorize(Roles =UserRoles.ADMIN),
-         ActionName((UserControllerConsts.GET_USER))]
+         ActionName((UserControllerConsts.GET_ACTION))]
         public ActionResult<User> Get(int id)
         {
             var user = _userDirectory.GetUser(id);
@@ -67,7 +67,7 @@ namespace NeighborHelp.Controllers
 
         [HttpGet,
          Authorize(Roles = UserRoles.ADMIN),
-         ActionName(UserControllerConsts.GET_USERS)]
+         ActionName(UserControllerConsts.GET_ALL_ACTION)]
 
         public ActionResult<IEnumerable<User>> GetAll()
         {
@@ -84,7 +84,7 @@ namespace NeighborHelp.Controllers
         }
 
         [Authorize]
-        [ActionName(UserControllerConsts.UPDATE_USER)]
+        [ActionName(UserControllerConsts.UPDATE_ACTION)]
         [HttpPut]
         public ActionResult<User> Put(User user)
         {

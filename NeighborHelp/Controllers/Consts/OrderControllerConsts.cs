@@ -7,11 +7,11 @@ namespace NeighborHelp.Controllers.Consts
 {
     public static class OrderControllerConsts
     {
-        public const string ORDER_CONTROLLER = "ORDERCONTROLLER";
-        public const string GET_ALL_ORDERS = "GET_ALL";
-        public const string GET_ORDERS_BY_USER = "GET_BY_USER";
-        public const string GET_ORDER = "GET";
-        public const string ADD_ORDER = "ADD";
-        public const string PUT_ORDER = "PUT";
+        public const string ORDER_CONTROLLER = "ORDER";
+        public const string GET_ALL_ACTION = "ALL";
+        public const string GET_BY_USER_ACTION = "BY_USER";
+        public const string GET_ACTION = "GET";
+        public const string ADD_ACTION = "ADD";
+        public const string PUT_ACTION = "PUT";
     }
 }

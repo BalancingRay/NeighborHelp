@@ -10,13 +10,11 @@ namespace NeighborHelp.Models
         public int Id { set; get; }
         public string Login { set; get; }
         public string UserName { set; get; }
+
         public string Password { set; get; }
 
-        public int? RoleId { set; get; }
-        public Role Role { set; get; }
+        public string Role { set; get; }
 
         public UserProfile Profile { set; get; }
-
-        public List<Order> Orders { set; get; }
     }
 }

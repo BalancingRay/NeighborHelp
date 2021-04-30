@@ -11,14 +11,12 @@ namespace NeighborHelp.Services
     public class MemoryUserOrderDirectory: IUserDirectoryServise, IOrderDirectoryServise
     {
         private List<User> Users;
-        private List<Role> Roles;
         private List<Order> Orders;
 
         public MemoryUserOrderDirectory()
         {
             Users = new List<User>();
             Orders = new List<Order>();
-            Roles = new List<Role>();
 
             FillUsers();
             FillOrders(Users.FirstOrDefault());
@@ -27,14 +25,13 @@ namespace NeighborHelp.Services
 
         private void FillUsers()
         {
-            var userRole = new Role() { Name = UserRoles.USER, ID=0 };
-            var adminRole = new Role() { Name = UserRoles.ADMIN, ID=1 };
+            var adminProfile = new UserProfile() { Name = "Vasil", Address = "Minsk" };
+            var user1Profile = new UserProfile() { Name = "Ilia", Address = "Krasnaya str. 28", PhoneNumber = "299-87-65" };
 
-            Roles.Add(userRole);
-            Roles.Add(adminRole);
-
-            var admin = new User() { Login = "admin", Password = "admin", Role = adminRole, RoleId = adminRole.ID, UserName = "Admin" };
-            var user = new User() { Login = "user1", Password = "1234", Role = userRole, RoleId = userRole.ID, UserName = "TestUser" };
+            var admin = new User() { Login = "admin", Password = "admin", Role = UserRoles.ADMIN, 
+                UserName = "SuperAdmin", Profile= adminProfile };
+            var user = new User() { Login = "user1", Password = "1234", Role = UserRoles.USER, 
+                UserName = "TestUser", Profile = user1Profile };
 
             TryAddUser(admin);
             TryAddUser(user);
@@ -44,7 +41,7 @@ namespace NeighborHelp.Services
         {
             var userOrder = new Order()
             {
-                Author = user,
+                Author = user.Profile,
                 AuthorID = user.Id,
                 OrderType = OrderTypes.SELL,
                 Product = "Диван, б/у",
@@ -54,7 +51,7 @@ namespace NeighborHelp.Services
 
             var userOrder2 = new Order()
             {
-                Author = user,
+                Author = user.Profile,
                 AuthorID = user.Id,
                 OrderType = OrderTypes.BUY,
                 Product = "Грамофон",
@@ -70,7 +67,7 @@ namespace NeighborHelp.Services
         {
             var userOrder = new Order()
             {
-                Author = user,
+                Author = user.Profile,
                 AuthorID = user.Id,
                 OrderType = OrderTypes.SELL,
                 Product = "Капуста",
@@ -80,7 +77,7 @@ namespace NeighborHelp.Services
 
             var userOrder2 = new Order()
             {
-                Author = user,
+                Author = user.Profile,
                 AuthorID = user.Id,
                 OrderType = OrderTypes.BUY,
                 Product = "3 литровые банки",
@@ -97,7 +94,7 @@ namespace NeighborHelp.Services
         public bool TryAddOrder(Order order)
         {
             bool isOrderNotInitialized = 
-                string.IsNullOrWhiteSpace(order?.Author?.Login) 
+                string.IsNullOrWhiteSpace(order?.Author?.Name) 
                 || string.IsNullOrWhiteSpace(order?.Product);
 
             if (isOrderNotInitialized)
@@ -162,27 +159,21 @@ namespace NeighborHelp.Services
             {
                 int lastID = Users.LastOrDefault()?.Id ?? 0;
                 user.Id = ++lastID;
+                if (user.Profile !=null)
+                {
+                    user.Profile.Id = user.Id;
+                }
                 Users.Add(user);
-                UpdateRoles(user);
 
                 return true;
             }
         }
 
-        private void UpdateRoles(User user)
-        {
-            var role = Roles.FirstOrDefault(r => r.Name == user.Role?.Name);
-
-            //if (role != null 
-            //    && !role.Users.Any(u => u.Id == user.Id))
-            //{
-            //    role.Users.Add(user);
-            //}
-        }
-
         public User GetUser(int id)
         {
-            return Users.FirstOrDefault(u => u.Id == id);
+            var user = Users.FirstOrDefault(u => u.Id == id);
+
+            return user;
         }
 
         public User GetUser(string login, string password)

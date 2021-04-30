@@ -17,6 +17,7 @@ namespace NeighborHelp.Controllers
         private IUserDirectoryServise _userDirectory;
 
         public AuthentificationController(IUserDirectoryServise service)
+        
         {
             _userDirectory = service;
         }
@@ -51,7 +52,7 @@ namespace NeighborHelp.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.Id.ToString()),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role?.Name)
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role)
             };
 
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType,
