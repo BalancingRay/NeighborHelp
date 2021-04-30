@@ -23,6 +23,20 @@ namespace NeighborHelp.Services
             FillOrders2(_users.GetUser(2));
         }
 
+        public void FillIfEmpty()
+        {
+            if (_users.GetUsers().Count == 0)
+            {
+                FillUsers();
+            }
+
+            if (_orders.GetAllOrders().Count == 0)
+            {
+                FillOrders(_users.GetUser(1));
+                FillOrders2(_users.GetUser(2));
+            }
+        }
+
         private void FillUsers()
         {
             var adminProfile = new UserProfile() { Name = "Vasil", Address = "Minsk" };
@@ -57,7 +71,7 @@ namespace NeighborHelp.Services
             var userOrder = new Order()
             {
                 Author = user.Profile,
-                AuthorID = user.Id,
+                AuthorId = user.Id,
                 OrderType = OrderTypes.SELL,
                 Product = "Диван, б/у",
                 ProductDescription = "Коричневый, мягкая обивка, состояние 7 из 10",
@@ -67,7 +81,7 @@ namespace NeighborHelp.Services
             var userOrder2 = new Order()
             {
                 Author = user.Profile,
-                AuthorID = user.Id,
+                AuthorId = user.Id,
                 OrderType = OrderTypes.BUY,
                 Product = "Грамофон",
                 ProductDescription = "Рабочий. Для проигрывания виниловых пластинок, можно полностью механический",
@@ -86,7 +100,7 @@ namespace NeighborHelp.Services
             var userOrder = new Order()
             {
                 Author = user.Profile,
-                AuthorID = user.Id,
+                AuthorId = user.Id,
                 OrderType = OrderTypes.SELL,
                 Product = "Капуста",
                 ProductDescription = "Среднего размера. Хорошее качество. Для засолки",
@@ -96,7 +110,7 @@ namespace NeighborHelp.Services
             var userOrder2 = new Order()
             {
                 Author = user.Profile,
-                AuthorID = user.Id,
+                AuthorId = user.Id,
                 OrderType = OrderTypes.BUY,
                 Product = "3 литровые банки",
                 ProductDescription = "Стреклянные банки 3 литра. б/у. Без сколов и трещин. Под закатки",

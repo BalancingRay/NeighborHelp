@@ -92,7 +92,7 @@ namespace NeighborHelp.Controllers
 
             if (int.TryParse(claimId, out int id))
             {
-                order.AuthorID = id;
+                order.AuthorId = id;
                 succeed = _orderDirectory.TryAddOrder(order);
             }
 

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace NeighborHelp.Services
 {
-    public class MemoryUserOrderDirectory: IUserDirectoryServise, IOrderDirectoryServise
+    public class MemoryUserOrderDirectory : IUserDirectoryServise, IOrderDirectoryServise
     {
         private List<User> Users;
         private List<Order> Orders;
@@ -17,17 +17,14 @@ namespace NeighborHelp.Services
         {
             Users = new List<User>();
             Orders = new List<Order>();
-
-            var testData = new TestDataFiller(this, this);
-            testData.FillAll();
         }
 
         #region IOrderDirectoryServise implementation
 
         public bool TryAddOrder(Order order)
         {
-            bool isOrderNotInitialized = 
-                string.IsNullOrWhiteSpace(order?.Author?.Name) 
+            bool isOrderNotInitialized =
+                string.IsNullOrWhiteSpace(order?.Author?.Name)
                 || string.IsNullOrWhiteSpace(order?.Product);
 
             if (isOrderNotInitialized)
@@ -63,7 +60,7 @@ namespace NeighborHelp.Services
         public bool TryPutOrder(Order order)
         {
             var oldOrder = Orders.FirstOrDefault(cl => (cl.ID == order.ID
-                                              && cl.AuthorID == order?.AuthorID));
+                                              && cl.AuthorId == order?.AuthorId));
 
             if (oldOrder != null)
             {
@@ -81,10 +78,10 @@ namespace NeighborHelp.Services
 
         public bool TryAddUser(User user)
         {
-            bool isUserNameEmpty = string.IsNullOrWhiteSpace(user?.Login);
-            bool isUserExist = Users.Any(u => u.Login == user?.Login);
+            bool isLoginEmpty = string.IsNullOrWhiteSpace(user?.Login);
+            bool isLoginExist = Users.Any(u => u.Login == user?.Login);
 
-            if (isUserNameEmpty || isUserExist)
+            if (isLoginEmpty || isLoginExist)
             {
                 return false;
             }
@@ -92,41 +89,44 @@ namespace NeighborHelp.Services
             {
                 int lastID = Users.LastOrDefault()?.Id ?? 0;
                 user.Id = ++lastID;
-                if (user.Profile !=null)
+                if (user.Profile != null)
                 {
                     user.Profile.Id = user.Id;
                 }
-                Users.Add(user);
+                Users.Add(user.Dublicate());
 
                 return true;
             }
         }
 
-        public User GetUser(int id)
+        public User GetUser(int id, bool useTracking = false)
         {
             var user = Users.FirstOrDefault(u => u.Id == id);
 
-            return user;
+            return useTracking ? user : user.Dublicate();
         }
 
         public User GetUser(string login, string password)
         {
-            return Users.FirstOrDefault(u => u.Login == login && u.Password == password);
+            var user = Users.FirstOrDefault(u => u.Login == login && u.Password == password);
+
+            return user.Dublicate();
         }
 
-        public IList<User> GetUsers()
+        public IList<User> GetUsers(bool useTracking = false)
         {
-            return Users.ToList();
+            var users = Users.ToList();
+            return useTracking ? users : users.Dublicate();
         }
 
         public bool TryPutUser(User user)
         {
-            var oldUser = Users.FirstOrDefault( u => (u.Login == user?.Login 
-                                                && u.Id == user?.Id));
+            var oldUser = Users.FirstOrDefault(u => (u.Login == user?.Login
+                                               && u.Id == user?.Id));
 
-            if (oldUser !=null)
+            if (oldUser != null)
             {
-                Users[Users.IndexOf(oldUser)] = user;
+                Users[Users.IndexOf(oldUser)] = user.Dublicate();
 
                 return true;
             }
