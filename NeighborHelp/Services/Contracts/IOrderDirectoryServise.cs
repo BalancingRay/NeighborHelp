@@ -9,10 +9,10 @@ namespace NeighborHelp.Services.Contracts
     public interface IOrderDirectoryServise
     {
         public bool TryAddOrder(Order order);
-        public Order GetOrder(int id);
-        public IList<Order> GetOrders(int userId);
+        public Order GetOrder(int id, bool useTracking = false);
+        public IList<Order> GetOrders(int userId, bool useTracking = false);
 
-        public IList<Order> GetAllOrders();
+        public IList<Order> GetAllOrders(bool useTracking = false);
 
         public bool TryPutOrder(Order order);
     }

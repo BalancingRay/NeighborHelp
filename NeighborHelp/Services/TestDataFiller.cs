@@ -32,8 +32,8 @@ namespace NeighborHelp.Services
 
             if (_orders.GetAllOrders().Count == 0)
             {
-                FillOrders(_users.GetUser(1));
-                FillOrders2(_users.GetUser(2));
+                FillOrders(_users.GetUser(1, true));
+                FillOrders2(_users.GetUser(2, true));
             }
         }
 

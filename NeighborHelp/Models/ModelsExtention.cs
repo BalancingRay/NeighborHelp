@@ -54,7 +54,7 @@ namespace NeighborHelp.Models
         {
             var newOrder = new Order()
             {
-                ID = order.ID,
+                Id = order.Id,
                 Product = order.Product,
                 ProductDescription = order.ProductDescription,
                 Cost = order.Cost,

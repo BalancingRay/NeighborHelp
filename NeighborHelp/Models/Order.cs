@@ -8,10 +8,10 @@ namespace NeighborHelp.Models
 {
     public class Order
     {
-        public int ID { get; set; }
-        [NotMapped]
+        public int Id { get; set; }
+
         public int AuthorId { set; get; }
-        [NotMapped]
+
         public UserProfile Author { set; get; }
         [NotMapped]
         public UserProfile Client { set; get; }

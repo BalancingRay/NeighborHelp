@@ -23,48 +23,65 @@ namespace NeighborHelp.Services
 
         public bool TryAddOrder(Order order)
         {
-            bool isOrderNotInitialized =
-                string.IsNullOrWhiteSpace(order?.Author?.Name)
-                || string.IsNullOrWhiteSpace(order?.Product);
+            bool isAuthorNotInitialized = order == null
+                || (string.IsNullOrWhiteSpace(order.Author?.Name) && order.AuthorId == 0);
 
-            if (isOrderNotInitialized)
+            bool isProductEmpty = string.IsNullOrWhiteSpace(order?.Product);
+
+            if (isAuthorNotInitialized || isProductEmpty)
             {
                 return false;
             }
             else
             {
-                order.Status = OrderStatus.INITIALIZE;
-                int lastID = Orders.LastOrDefault()?.ID ?? 0;
-                order.ID = ++lastID;
-                Orders.Add(order);
+                if (string.IsNullOrEmpty(order.Status))
+                {
+                    order.Status = OrderStatus.INITIALIZE;
+                }
+
+                if(order.Author != null)
+                {
+                    order.AuthorId = order.Author.Id;
+                }
+                else
+                {
+                    order.Author = GetUser(order.AuthorId)?.Profile;
+                }
+
+                int lastID = Orders.LastOrDefault()?.Id ?? 0;
+                order.Id = ++lastID;
+                Orders.Add(order.Dublicate());
 
                 return true;
             }
         }
 
-        public Order GetOrder(int id)
+        public Order GetOrder(int id, bool useTracking = false)
         {
-            return Orders.FirstOrDefault(cl => cl.ID == id);
+            var order = Orders.FirstOrDefault(cl => cl.Id == id);
+            return useTracking ? order : order.Dublicate();
         }
 
-        public IList<Order> GetOrders(int userId)
+        public IList<Order> GetOrders(int userId, bool useTracking = false)
         {
-            return Orders.Where(cl => cl.Author.Id == userId).ToList();
+            var orders = Orders.Where(cl => cl.Author.Id == userId).ToList();
+            return useTracking ? orders : orders.Dublicate();
         }
 
-        public IList<Order> GetAllOrders()
+        public IList<Order> GetAllOrders(bool useTracking = false)
         {
-            return Orders.ToList();
+            var orders = Orders.ToList();
+            return useTracking ? orders : orders.Dublicate();
         }
 
         public bool TryPutOrder(Order order)
         {
-            var oldOrder = Orders.FirstOrDefault(cl => (cl.ID == order.ID
+            var oldOrder = Orders.FirstOrDefault(cl => (cl.Id == order.Id
                                               && cl.AuthorId == order?.AuthorId));
 
             if (oldOrder != null)
             {
-                Orders[Orders.IndexOf(oldOrder)] = order;
+                Orders[Orders.IndexOf(oldOrder)] = order.Dublicate();
 
                 return true;
             }

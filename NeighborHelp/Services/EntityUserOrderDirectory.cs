@@ -11,7 +11,7 @@ namespace NeighborHelp.Services
 {
     public class EntityUserOrderDirectory : IOrderDirectoryServise, IUserDirectoryServise
     {
-        protected ApplicationContext DataBase { get;}
+        protected ApplicationContext DataBase { get; }
 
         protected DbSet<User> Users => DataBase.Users;
         protected DbSet<Order> Orders => DataBase.Orders;
@@ -46,8 +46,14 @@ namespace NeighborHelp.Services
 
         public User GetUser(int id, bool useTraching = false)
         {
-            var user = useTraching ? Users.SingleOrDefault(u => u.Id == id) : Users.AsNoTracking().Include(u => u.Profile).SingleOrDefault(u => u.Id == id);
-            return user;
+            if (useTraching)
+            {
+                return Users.SingleOrDefault(u => u.Id == id);
+            }
+            else
+            {
+                return Users.AsNoTracking().Include(u => u.Profile).SingleOrDefault(u => u.Id == id);
+            }
         }
 
         public User GetUser(string login, string password)
@@ -59,20 +65,25 @@ namespace NeighborHelp.Services
 
         public IList<User> GetUsers(bool useTraching = false)
         {
-            return useTraching ? Users.ToList() : Users.AsNoTracking().Include(u => u.Profile).ToList();
+            if (useTraching)
+            {
+                return Users.ToList();
+            }
+            else
+            {
+                return Users.AsNoTracking().Include(u => u.Profile).ToList();
+            }
         }
 
         public bool TryPutUser(User user)
         {
             if (Users.Any(u => u.Login == user.Login && u.Id == user.Id))
             {
-                bool isDetached = DataBase.Entry(user).State == EntityState.Detached;
-
-                if (isDetached)
+                if (IsDetached(user))
                 {
                     Users.Update(user);
                 }
-                
+
                 DataBase.SaveChanges();
 
                 return true;
@@ -88,36 +99,63 @@ namespace NeighborHelp.Services
 
         public bool TryAddOrder(Order order)
         {
-            bool isOrderNotInitialized =
-                string.IsNullOrWhiteSpace(order?.Author?.Name)
-                || string.IsNullOrWhiteSpace(order?.Product);
+            bool isAuthorNotInitialized = order == null
+                || (string.IsNullOrWhiteSpace(order.Author?.Name) && order.AuthorId == 0);
 
-            if (isOrderNotInitialized)
+            bool isProductEmpty = string.IsNullOrWhiteSpace(order?.Product);
+
+            if (isAuthorNotInitialized || isProductEmpty)
             {
                 return false;
             }
             else
             {
-                order.Status = OrderStatus.INITIALIZE;
+                if (string.IsNullOrEmpty(order.Status))
+                {
+                    order.Status = OrderStatus.INITIALIZE;
+                }
                 Orders.Add(order);
                 DataBase.SaveChanges();
                 return true;
             }
         }
 
-        public Order GetOrder(int id)
+        public Order GetOrder(int id, bool useTracking = false)
         {
-            return Orders.FirstOrDefault(cl => cl.ID == id);
+            if (useTracking)
+            {
+                return Orders.SingleOrDefault(cl => cl.Id == id);
+            }
+            else
+            {
+                return Orders.AsNoTracking().Include(o => o.Author).SingleOrDefault(cl => cl.Id == id);
+            }
         }
 
-        public IList<Order> GetOrders(int userId)
+        public IList<Order> GetOrders(int userId, bool useTracking = false)
         {
-            return Orders.Where(cl => cl.Author.Id == userId).ToList();
+            if (useTracking)
+            {
+                return Orders.Where(cl => cl.Author.Id == userId).ToList();
+            }
+            else
+            {
+                return Orders.AsNoTracking().Include(o => o.Author).Where(cl => cl.Author.Id == userId).ToList();
+            }
+
         }
 
-        public IList<Order> GetAllOrders()
+        public IList<Order> GetAllOrders(bool useTracking = false)
         {
-            return Orders.ToList();
+            if (useTracking)
+            {
+                return Orders.ToList();
+            }
+            else
+            {
+                return Orders.AsNoTracking().Include(o => o.Author).ToList();
+            }
+
         }
 
         public bool TryPutOrder(Order order)
@@ -125,9 +163,13 @@ namespace NeighborHelp.Services
             if (order == null)
                 return false;
 
-            if (Orders.Any(cl => (cl.ID == order.ID && cl.AuthorId == order.AuthorId)))
+            if (Orders.Any(cl => (cl.Id == order.Id && cl.AuthorId == order.AuthorId)))
             {
-                Orders.Update(order);
+                if (IsDetached(order))
+                {
+                    Orders.Update(order);
+                }
+
                 DataBase.SaveChanges();
 
                 return true;
@@ -137,5 +179,11 @@ namespace NeighborHelp.Services
         }
 
         #endregion IOrderDirectoryServise implementation
+
+        private bool IsDetached<TEntity>(TEntity entity) where TEntity : class
+        {
+            var entityState = DataBase.Entry(entity).State;
+            return entityState == EntityState.Detached;
+        }
     }
 }
