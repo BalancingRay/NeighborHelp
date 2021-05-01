@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NeighborHelp.Controllers.Consts;
 using NeighborHelp.Services;
 using NeighborHelp.Services.Contracts;
 using System;
@@ -17,7 +18,9 @@ namespace NeighborHelp
 {
     public class Startup
     {
+        private const string ConnectionPropertyName = "DefaultConnection";
         private bool ClearDBOnStart = true;
+        private bool UseSQLDatabase = true;
         public IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
@@ -34,8 +37,8 @@ namespace NeighborHelp
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
-                    options.LoginPath = new PathString("/Authentification/Login");
-                    options.AccessDeniedPath = new PathString("/Authentification/Login");
+                    options.LoginPath = new PathString(PathConst.LOGIN_PATH);
+                    options.AccessDeniedPath = new PathString(PathConst.LOGIN_PATH);
                 });
             services.AddAuthorization();
 
@@ -44,25 +47,38 @@ namespace NeighborHelp
 
         private IServiceCollection ConfigureDirectory(IServiceCollection services)
         {
+            if (UseSQLDatabase)
+            {
+                string connection = Configuration.GetConnectionString(ConnectionPropertyName);
 
-            //Use MS SQL server implementation
-            string connection = Configuration.GetConnectionString("DefaultConnection");
+                //Don't use ApplicationContext directly. Use EntityUserOrderDirectory class instead.
+                //services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection));
 
-            var options = new DbContextOptionsBuilder<ApplicationContext>()
-                    .UseSqlServer(connection)
-                    .Options;
+                var options = new DbContextOptionsBuilder<ApplicationContext>()
+                        .UseSqlServer(connection)
+                        .Options;
 
-            ApplicationContext applicationContext = new ApplicationContext(options, ClearDBOnStart);
-            var directoryService = new EntityUserOrderDirectory(applicationContext);
+                services.AddScoped(typeof(IOrderDirectoryServise), 
+                    (servProvider)=> 
+                    new EntityUserOrderDirectory(new ApplicationContext(options)));
+                services.AddScoped(typeof(IUserDirectoryServise), 
+                    (servProvider) => 
+                    new EntityUserOrderDirectory(new ApplicationContext(options)));
 
-            //Use memory implementation
-            //var directoryService = new MemoryUserOrderDirectory();
+                //Fill start data
+                ApplicationContext applicationContext = new ApplicationContext(options, ClearDBOnStart);
+                var directoryService = new EntityUserOrderDirectory(applicationContext);
+                var testData = new TestDataFiller(directoryService, directoryService);
+                testData.FillIfEmpty();         
+            }
+            else
+            {
+                //Use implementation in RAM
+                var directoryService = new MemoryUserOrderDirectory();
 
-            var testData = new TestDataFiller(directoryService, directoryService);
-            testData.FillIfEmpty();
-
-            services.AddSingleton(typeof(IOrderDirectoryServise), directoryService);
-            services.AddSingleton(typeof(IUserDirectoryServise), directoryService);
+                services.AddSingleton(typeof(IOrderDirectoryServise), directoryService);
+                services.AddSingleton(typeof(IUserDirectoryServise), directoryService);
+            }
 
             return services;
         }

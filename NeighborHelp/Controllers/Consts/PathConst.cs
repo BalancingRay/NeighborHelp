@@ -11,5 +11,6 @@ namespace NeighborHelp.Controllers.Consts
         public const string USER_CONTROLLER = "USER";
         public const string ORDER_CONTROLLER = "ORDER";
         public const string LOGIN_CONTROLLER = "Authentification";
+        public static string LOGIN_PATH = $"/{LOGIN_CONTROLLER}/Login";
     }
 }
