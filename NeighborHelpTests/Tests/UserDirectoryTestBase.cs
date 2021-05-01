@@ -3,12 +3,13 @@ using NeighborHelp.Services;
 using NeighborHelp.Services.Contracts;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NeighborHelpTests.Tests
 {
     public abstract class UserDirectoryTestBase
     {
-        public IUserDirectoryServise UserDirectory { get; protected set; }
+        public abstract IUserDirectoryServise UserDirectory { get;}
 
         #region AddUser tests
 
@@ -74,7 +75,6 @@ namespace NeighborHelpTests.Tests
         #endregion AddUser tests
 
 
-        //TODO add tests to check tracking option
         #region GetUser tests
         [Test]
         public void GetUserLoginTest()
@@ -188,34 +188,72 @@ namespace NeighborHelpTests.Tests
         #endregion GetUser Tests
 
 
+        #region Tracking tests
+
+        [Test]
+        public void Get_tracked_ChangingUserTest()
+        {
+            bool trackingOption = true;
+            string originalName = "Spider";
+            string newName = "Gorilla";
+
+            UserDirectory.TryAddUser(new User() { UserName = originalName, Login = "user1" });
+
+            UserDirectory.GetUsers(trackingOption).Single()
+                .UserName = newName;
+            var user = UserDirectory.GetUsers(trackingOption).Single();
+
+            Assert.IsTrue(user.UserName == newName);
+        }
+
+        [Test]
+        public void Get_untracked_ChangingUserTest()
+        {
+            bool trackingOption = false;
+            string originalName = "Spider";
+            string newName = "Gorilla";
+
+            UserDirectory.TryAddUser(new User() { UserName = originalName, Login = "user1" });
+
+            UserDirectory.GetUsers(trackingOption).Single()
+                .UserName = newName;
+            var user = UserDirectory.GetUsers(trackingOption).Single();
+
+            Assert.IsTrue(user.UserName == originalName);
+        }
+
+        #endregion Tracking tests
+
         //TODO add tests to check tracking option
         #region PutUser Tests
 
-        //TODO Why this test not working in case during thacking disabled
-        [Test]
-        public void PutUserNameTest()
+        //TODO Why this test not working with Entity Framework in case during tracking disabled?
+        [TestCase(true)]
+        //[TestCase(false)]
+        public void PutUserNameTest_trackingOption(bool useTracking)
         {
             UserDirectory.TryAddUser(new User() { Login = "user1" });
             string userName = "TestName";
 
-            var firstUser = UserDirectory.GetUsers(true)[0];
+            var firstUser = UserDirectory.GetUsers(useTracking).Single();
             firstUser.UserName = userName;
             bool result = UserDirectory.TryPutUser(firstUser);
 
-            firstUser = UserDirectory.GetUsers(true)[0];
+            firstUser = UserDirectory.GetUsers(useTracking).Single();
             Assert.IsTrue(result && firstUser.UserName == userName);
         }
 
-        //TODO Why this test not working in case during thacking disabled
-        [Test]
-        public void PutUserProfileTest()
+        //TODO Why this test not working with Entity Framework in case during tracking disabled?
+        [TestCase(true)]
+        //[TestCase(false)]
+        public void PutUserProfileTest__trackingOption(bool useTracking)
         {
             UserDirectory.TryAddUser(new User() { Login = "user1" });
             string profileName = "Ilya";
             string profilePhoneNumber = "100-400-600";
             string profileAddress = "Cenral str.98";
 
-            var firstUser = UserDirectory.GetUsers(true)[0];
+            var firstUser = UserDirectory.GetUsers(useTracking).Single();
             firstUser.Profile = new UserProfile()
             {
                 Name = profileName,
@@ -224,7 +262,7 @@ namespace NeighborHelpTests.Tests
             };
             bool result = UserDirectory.TryPutUser(firstUser);
 
-            firstUser = UserDirectory.GetUsers(true)[0];
+            firstUser = UserDirectory.GetUsers(useTracking).Single();
             Assert.IsTrue(result 
                 && firstUser.Profile.Name == profileName
                 && firstUser.Profile.Address == profileAddress

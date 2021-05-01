@@ -1,4 +1,5 @@
 ﻿using NeighborHelp.Services;
+using NeighborHelp.Services.Contracts;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,13 @@ namespace NeighborHelpTests.Tests
 {
     public class MemoryUserDirectoryTest:UserDirectoryTestBase
     {
+        private IUserDirectoryServise _UserDirectoryInMemory;
+        public override IUserDirectoryServise UserDirectory => _UserDirectoryInMemory;
+
         [SetUp]
         public void Setup()
         {
-            UserDirectory = new MemoryUserOrderDirectory();
+            _UserDirectoryInMemory = new MemoryUserOrderDirectory();
         }
     }
 }
