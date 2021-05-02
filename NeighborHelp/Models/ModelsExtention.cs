@@ -12,25 +12,8 @@ namespace NeighborHelp.Models
             if (user == null)
                 return null;
 
-            var newUser = new User()
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Login = user.Login,
-                Password = user.Password,
-                Role = user.Role,
-            };
-
-            if (user.Profile != null)
-            {
-                newUser.Profile = new UserProfile()
-                {
-                    Name = user.Profile.Name,
-                    Address = user.Profile.Address,
-                    PhoneNumber = user.Profile.PhoneNumber,
-                    Id = user.Profile.Id
-                };
-            }
+            var newUser = new User();
+            newUser.UpdateFrom(user);           
 
             return newUser;
         }
@@ -52,27 +35,11 @@ namespace NeighborHelp.Models
 
         public static Order Dublicate(this Order order)
         {
-            var newOrder = new Order()
-            {
-                Id = order.Id,
-                Product = order.Product,
-                ProductDescription = order.ProductDescription,
-                Cost = order.Cost,
-                AuthorId = order.AuthorId,
-                OrderType = order.OrderType,
-                Status = order.Status
-            };
+            if (order == null)
+                return null;
 
-            if (order.Author != null)
-            {
-                newOrder.Author = new UserProfile()
-                {
-                    Name = order.Author.Name,
-                    Address = order.Author.Address,
-                    Id = order.Author.Id,
-                    PhoneNumber = order.Author.PhoneNumber
-                };
-            }
+            var newOrder = new Order();
+            newOrder.UpdateFrom(order);
 
             return newOrder;
         }
@@ -90,6 +57,48 @@ namespace NeighborHelp.Models
             }
 
             return newOrders;
+        }
+
+        public static void UpdateFrom(this User target, User source)
+        {
+            target.Id = source.Id;
+            target.UserName = source.UserName;
+            target.Login = source.Login;
+            target.Password = source.Password;
+            target.Role = source.Role;
+
+            if (source.Profile != null)
+            {
+                if (target.Profile == null)
+                    target.Profile = new UserProfile();
+
+                target.Profile.Name = source.Profile.Name;
+                target.Profile.Address = source.Profile.Address;
+                target.Profile.PhoneNumber = source.Profile.PhoneNumber;
+                target.Profile.Id = source.Profile.Id;
+            }
+        }
+
+        public static void UpdateFrom(this Order target, Order source)
+        {
+            target.Id = source.Id;
+            target.Product = source.Product;
+            target.ProductDescription = source.ProductDescription;
+            target.Cost = source.Cost;
+            target.AuthorId = source.AuthorId;
+            target.OrderType = source.OrderType;
+            target.Status = source.Status;
+
+            if (source.Author != null)
+            {
+                if (target.Author == null)
+                    target.Author = new UserProfile();
+
+                target.Author.Id = source.Author.Id;
+                target.Author.Name = source.Author.Name;
+                target.Author.Address = source.Author.Address;
+                target.Author.PhoneNumber = source.Author.PhoneNumber;
+            }
         }
     }
 }
