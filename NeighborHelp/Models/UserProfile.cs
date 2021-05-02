@@ -9,8 +9,6 @@ namespace NeighborHelp.Models
 {
     public class UserProfile
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         public string PhoneNumber { get; set; }
@@ -20,6 +18,8 @@ namespace NeighborHelp.Models
         public string Name { get; set; }
 
         public List<Order> Orders { set; get; }
+
+        public User OwnerUser { set; get; }
 
         public UserProfile()
         {
