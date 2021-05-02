@@ -1,10 +1,8 @@
 ﻿using NeighborHelp.Models;
 using NeighborHelp.Models.Consts;
 using NeighborHelp.Services.Contracts;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace NeighborHelp.Services
 {
@@ -23,12 +21,18 @@ namespace NeighborHelp.Services
 
         public bool TryAddOrder(Order order)
         {
-            bool isAuthorNotInitialized = order == null
-                || (string.IsNullOrWhiteSpace(order.Author?.Name) && order.AuthorId == 0);
+            if (order == null)
+                return false;
+
+            if (order.AuthorId <1)
+            {
+                order.AuthorId = order.Author?.Id ?? -1;
+            }
+            order.Author = GetUser(order.AuthorId)?.Profile;
 
             bool isProductEmpty = string.IsNullOrWhiteSpace(order?.Product);
 
-            if (isAuthorNotInitialized || isProductEmpty)
+            if (order.Author == null || isProductEmpty)
             {
                 return false;
             }
@@ -39,18 +43,9 @@ namespace NeighborHelp.Services
                     order.Status = OrderStatus.INITIALIZE;
                 }
 
-                if(order.Author != null)
-                {
-                    order.AuthorId = order.Author.Id;
-                }
-                else
-                {
-                    order.Author = GetUser(order.AuthorId)?.Profile;
-                }
-
                 int lastID = Orders.LastOrDefault()?.Id ?? 0;
                 order.Id = ++lastID;
-                Orders.Add(order.Dublicate());
+                Orders.Add(order);//.Dublicate());
 
                 return true;
             }
@@ -81,7 +76,7 @@ namespace NeighborHelp.Services
 
             if (oldOrder != null)
             {
-                Orders[Orders.IndexOf(oldOrder)] = order.Dublicate();
+                Orders[Orders.IndexOf(oldOrder)] = order;//.Dublicate();
 
                 return true;
             }
@@ -95,10 +90,14 @@ namespace NeighborHelp.Services
 
         public bool TryAddUser(User user)
         {
-            bool isLoginEmpty = string.IsNullOrWhiteSpace(user?.Login);
-            bool isLoginExist = Users.Any(u => u.Login == user?.Login);
+            if (user == null)
+                return false;
 
-            if (isLoginEmpty || isLoginExist)
+            bool isLoginEmpty = string.IsNullOrWhiteSpace(user.Login);
+            bool isLoginExist = Users.Any(u => u.Login == user.Login);
+            bool isProfileDublicated = user.Profile != null && Users.Any(u => u.Profile == user.Profile);
+
+            if (isLoginEmpty || isLoginExist || isProfileDublicated)
             {
                 return false;
             }
@@ -108,9 +107,10 @@ namespace NeighborHelp.Services
                 user.Id = ++lastID;
                 if (user.Profile != null)
                 {
+                    //int lastProfileId = Users.Where(u => user.Profile != null).LastOrDefault()?.Id ?? 0;
                     user.Profile.Id = user.Id;
                 }
-                Users.Add(user.Dublicate());
+                Users.Add(user);//.Dublicate());
 
                 return true;
             }
@@ -143,7 +143,7 @@ namespace NeighborHelp.Services
 
             if (oldUser != null)
             {
-                Users[Users.IndexOf(oldUser)] = user.Dublicate();
+                Users[Users.IndexOf(oldUser)] = user;//.Dublicate();
 
                 return true;
             }

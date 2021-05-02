@@ -30,8 +30,9 @@ namespace NeighborHelp.Services
 
             bool isLoginEmpty = string.IsNullOrWhiteSpace(user.Login);
             bool isLoginExist = Users.Any(u => u.Login == user.Login);
+            bool isProfileDublicated = user.Profile != null && Users.Any(u => u.Profile == user.Profile);
 
-            if (isLoginEmpty || isLoginExist)
+            if (isLoginEmpty || isLoginExist || isProfileDublicated)
             {
                 return false;
             }
@@ -44,7 +45,7 @@ namespace NeighborHelp.Services
             }
         }
 
-        public User GetUser(int id, bool useTraching = false)
+        public User GetUser(int id, bool useTraching)
         {
             if (useTraching)
             {
@@ -63,7 +64,7 @@ namespace NeighborHelp.Services
             return user;
         }
 
-        public IList<User> GetUsers(bool useTraching = false)
+        public IList<User> GetUsers(bool useTraching)
         {
             if (useTraching)
             {
@@ -81,7 +82,8 @@ namespace NeighborHelp.Services
             {
                 if (IsDetached(user))
                 {
-                    Users.Update(user);
+                    var originalUser = GetUser(user.Id, true);
+                    originalUser.UpdateFrom(user);
                 }
 
                 DataBase.SaveChanges();
@@ -99,12 +101,19 @@ namespace NeighborHelp.Services
 
         public bool TryAddOrder(Order order)
         {
-            bool isAuthorNotInitialized = order == null
-                || (string.IsNullOrWhiteSpace(order.Author?.Name) && order.AuthorId == 0);
+            if (order == null)
+                return false;
 
-            bool isProductEmpty = string.IsNullOrWhiteSpace(order?.Product);
+            if (IsIncorrectId(order.AuthorId))
+            {
+                order.AuthorId = order.Author?.Id ?? 0;
+            }
 
-            if (isAuthorNotInitialized || isProductEmpty)
+            bool isAuthorIdExist = Users.Any(u=> u.Profile.Id == order.AuthorId);
+
+            bool isProductEmpty = string.IsNullOrWhiteSpace(order.Product);
+
+            if (!isAuthorIdExist || isProductEmpty)
             {
                 return false;
             }
@@ -114,13 +123,16 @@ namespace NeighborHelp.Services
                 {
                     order.Status = OrderStatus.INITIALIZE;
                 }
+
+                order.Author = null;
+
                 Orders.Add(order);
                 DataBase.SaveChanges();
                 return true;
             }
         }
 
-        public Order GetOrder(int id, bool useTracking = false)
+        public Order GetOrder(int id, bool useTracking)
         {
             if (useTracking)
             {
@@ -132,7 +144,7 @@ namespace NeighborHelp.Services
             }
         }
 
-        public IList<Order> GetOrders(int userId, bool useTracking = false)
+        public IList<Order> GetOrders(int userId, bool useTracking)
         {
             if (useTracking)
             {
@@ -145,7 +157,7 @@ namespace NeighborHelp.Services
 
         }
 
-        public IList<Order> GetAllOrders(bool useTracking = false)
+        public IList<Order> GetAllOrders(bool useTracking)
         {
             if (useTracking)
             {
@@ -167,7 +179,8 @@ namespace NeighborHelp.Services
             {
                 if (IsDetached(order))
                 {
-                    Orders.Update(order);
+                    var originalOrder = GetOrder(order.Id, true);
+                    originalOrder.UpdateFrom(order);
                 }
 
                 DataBase.SaveChanges();
@@ -184,6 +197,16 @@ namespace NeighborHelp.Services
         {
             var entityState = DataBase.Entry(entity).State;
             return entityState == EntityState.Detached;
+        }
+
+        private static bool IsCorrectId(int id)
+        {
+            return id > 0;
+        }
+
+        private static bool IsIncorrectId(int id)
+        {
+            return !IsCorrectId(id);
         }
     }
 }
