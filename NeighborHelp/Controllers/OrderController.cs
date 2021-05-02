@@ -47,7 +47,7 @@ namespace NeighborHelp.Controllers
 
             if (order != null)
             {
-                return new ObjectResult(order);
+                return new ActionResult<Order>(order);
             }
             else
             {
@@ -69,7 +69,7 @@ namespace NeighborHelp.Controllers
 
             if (succeed)
             {
-                return new OkObjectResult(order);
+                return new ActionResult<Order>(order);
             }
             else
             {
@@ -87,7 +87,7 @@ namespace NeighborHelp.Controllers
                 return new NoContentResult();
             }
 
-            var claimId = HttpContext.User.Claims.FirstOrDefault(cl => cl.Type == ClaimsIdentity.DefaultNameClaimType)?.Value;
+            string claimId = HttpContext?.User?.Claims?.FirstOrDefault(cl => cl.Type == ClaimsIdentity.DefaultNameClaimType)?.Value;
             bool succeed = false;
 
             if (int.TryParse(claimId, out int id))
@@ -98,7 +98,7 @@ namespace NeighborHelp.Controllers
 
             if (succeed)
             {
-                return new OkObjectResult(order);
+                return new ActionResult<Order>(order);
             }
             else
             {

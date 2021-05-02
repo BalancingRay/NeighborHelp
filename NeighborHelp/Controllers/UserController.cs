@@ -30,7 +30,7 @@ namespace NeighborHelp.Controllers
          ActionName(UserControllerConsts.GET_CURRENT_ACTION)]
         public ActionResult<User> Current()
         {
-            var claimId = HttpContext.User.Claims.FirstOrDefault(cl => cl.Type == ClaimsIdentity.DefaultNameClaimType)?.Value;
+            string claimId = HttpContext?.User?.Claims?.FirstOrDefault(cl => cl.Type == ClaimsIdentity.DefaultNameClaimType)?.Value;
             User user = null;
 
             if (int.TryParse(claimId, out int id))
@@ -40,7 +40,7 @@ namespace NeighborHelp.Controllers
 
             if (user != null)
             {
-                return new ObjectResult(user);
+                return new ActionResult<User>(user);
             }
             else
             {
@@ -50,14 +50,14 @@ namespace NeighborHelp.Controllers
 
         [HttpGet("{id}"),
          Authorize(Roles =UserRoles.ADMIN),
-         ActionName((UserControllerConsts.GET_ACTION))]
+         ActionName(UserControllerConsts.GET_ACTION)]
         public ActionResult<User> Get(int id)
         {
             var user = _userDirectory.GetUser(id);
 
             if (user != null)
             {
-                return new ObjectResult(user);
+                return new ActionResult<User>(user);
             }
             else
             {
@@ -97,7 +97,7 @@ namespace NeighborHelp.Controllers
 
             if (succeed)
             {
-                return new OkObjectResult(user);
+                return new ActionResult<User>(user);
             }
             else
             {
@@ -118,7 +118,7 @@ namespace NeighborHelp.Controllers
 
             if (succeed)
             {
-                return new OkObjectResult(user);
+                return new ActionResult<User>(user);
             }
             else
             {
