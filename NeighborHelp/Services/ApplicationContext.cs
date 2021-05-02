@@ -23,9 +23,13 @@ namespace NeighborHelp.Services
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<User>().OwnsOne(u => u.Profile);
+            modelBuilder.Entity<User>()
+            .HasOne(u => u.Profile).WithOne(p => p.OwnerUser)
+            .HasForeignKey<UserProfile>(up => up.Id);
+
             modelBuilder.Entity<Order>()
-               .HasOne(o => o.Author).WithMany(a => a.Orders).HasForeignKey(nameof(Order.AuthorId));
+               .HasOne(o => o.Author).WithMany(a => a.Orders)
+               .HasForeignKey(o => o.AuthorId);
         }
     }
 }
