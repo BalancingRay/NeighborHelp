@@ -1,9 +1,7 @@
 using NeighborHelp.Models;
 using NeighborHelp.Models.Consts;
-using NeighborHelp.Services;
 using NeighborHelp.Services.Contracts;
 using NUnit.Framework;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace NeighborHelpTests.Tests
@@ -41,7 +39,7 @@ namespace NeighborHelpTests.Tests
         {
             _UserDirectory.TryAddUser(user);
 
-            return _UserDirectory.GetUsers(true).FirstOrDefault(u => u.Login == user.Login);
+            return _UserDirectory.GetUsers().FirstOrDefault(u => u.Login == user.Login);
         }
 
         #region AddOrder tests
@@ -49,7 +47,7 @@ namespace NeighborHelpTests.Tests
         [TestCase(0)]
         [TestCase(1)]
         [TestCase(10)]
-        public void TryAddOrderTest(int countOfOrder)
+        public void AddOrder(int countOfOrder)
         {
             bool result = true;
 
@@ -65,7 +63,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void UniqueOrderIdTest()
+        public void UniqueOrderId()
         {
             OrderDirectory.TryAddOrder(new Order() { Product = "vegetables", Author = UserProfile1 });
             OrderDirectory.TryAddOrder(new Order() { Product = "books", Author = UserProfile2 });
@@ -76,7 +74,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void AddOrderAuthorByIdTest()
+        public void AddOrderAuthorById()
         {
             bool result = OrderDirectory.TryAddOrder(new Order() { Product = "bread", AuthorId = UserProfile2.Id });
 
@@ -87,9 +85,9 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void CompareAutorIdTest()
+        public void CompareAutorId()
         {
-            bool result = OrderDirectory.TryAddOrder(new Order() { Product = "bread", Author = UserProfile1});
+            bool result = OrderDirectory.TryAddOrder(new Order() { Product = "bread", AuthorId = UserProfile1.Id });
 
             var order = OrderDirectory.GetAllOrders().Single();
 
@@ -97,7 +95,7 @@ namespace NeighborHelpTests.Tests
                 && order.Author.Id == order.AuthorId);
         }
 
-        public void DenyAddDublicateOrdersTest()
+        public void Deny_AddDublicateOrders()
         {
             var order = new Order() { Product = "vegetables", Author = UserProfile1 };
             OrderDirectory.TryAddOrder(new Order() );
@@ -111,7 +109,7 @@ namespace NeighborHelpTests.Tests
         [TestCase(null)]
         [TestCase("")]
         [TestCase("    ")]
-        public void DenyInvalidOrEmptyProductTest(string product)
+        public void Deny_InvalidOrEmptyProduct(string product)
         {
             bool result = OrderDirectory.TryAddOrder(new Order() { Product = product, Author = UserProfile1 });
 
@@ -120,7 +118,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void DenyAddNullOrderTest()
+        public void Deny_AddNullOrder()
         {
             bool result = OrderDirectory.TryAddOrder(null);
 
@@ -129,9 +127,27 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void DenyAddNullUserProfileTest()
+        public void Deny_AddOrder_withot_Author()
         {
             bool result = OrderDirectory.TryAddOrder(new Order() {Product="something" });
+
+            Assert.IsTrue(result == false);
+            Assert.IsTrue(OrderDirectory.GetAllOrders().Count == 0);
+        }
+
+        [Test]
+        public void Deny_AddOrder_with_new_Author()
+        {
+            bool result = OrderDirectory.TryAddOrder(new Order() { Product = "something", Author = new UserProfile() });
+
+            Assert.IsTrue(result == false);
+            Assert.IsTrue(OrderDirectory.GetAllOrders().Count == 0);
+        }
+
+        [Test]
+        public void Deny_AddOrder_with_incorrect_AuthorId()
+        {
+            bool result = OrderDirectory.TryAddOrder(new Order() { Product = "something", AuthorId = 20});
 
             Assert.IsTrue(result == false);
             Assert.IsTrue(OrderDirectory.GetAllOrders().Count == 0);
@@ -141,11 +157,11 @@ namespace NeighborHelpTests.Tests
 
         #region GetOrder tests
         [Test]
-        public void GetOrderProductTest()
+        public void GetOrderProduct()
         {
             string product = "cherry";
 
-            OrderDirectory.TryAddOrder(new Order() { Product = product, Author = UserProfile1 });
+            OrderDirectory.TryAddOrder(new Order() { Product = product, AuthorId = UserProfile1.Id });
 
             var orders = OrderDirectory.GetAllOrders();
 
@@ -153,7 +169,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void GetOrderDescriptionTest()
+        public void GetOrderDescription()
         {
             string description = "It's the best car in our city";
 
@@ -165,7 +181,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void GetOrderStatusTest()
+        public void GetOrderStatus()
         {
             string status = OrderStatus.ACTIVE;
 
@@ -177,7 +193,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void GetDefaultOrderStatusTest()
+        public void GetDefaultOrderStatus()
         {
             OrderDirectory.TryAddOrder(new Order() {Product = "car", Author = UserProfile1 });
 
@@ -187,7 +203,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void GetOrderTypeTest()
+        public void GetOrderType()
         {
             string orderType = OrderTypes.SELL;
 
@@ -199,7 +215,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void GetOrderCostTest()
+        public void GetOrderCost()
         {
             double orderCost = 6800f;
 
@@ -211,7 +227,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void GetOrdersByUserIdTest()
+        public void GetOrders_ByAuthorId()
         {
             OrderDirectory.TryAddOrder(new Order() { Author = UserProfile1, Product = "user_1_prod_1"});
             OrderDirectory.TryAddOrder(new Order() { Author = UserProfile1, Product = "user_1_prod_2" });            
@@ -229,11 +245,11 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void GetOrderByIdTest()
+        public void GetOrder_ById()
         {
             string product = "apple";
 
-            OrderDirectory.TryAddOrder(new Order() { Product = product, Author = UserProfile1 });
+            OrderDirectory.TryAddOrder(new Order() { Product = product, AuthorId = UserProfile1.Id });
 
             int orderId = OrderDirectory.GetAllOrders().First().Id;
             var order = OrderDirectory.GetOrder(orderId);
@@ -246,7 +262,7 @@ namespace NeighborHelpTests.Tests
         #region Tracking tests
 
         [Test]
-        public void Get_tracked_ChangingProductTest()
+        public void Get_tracked_ChangingProduct()
         {
             bool trackingOption = true;
 
@@ -263,7 +279,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void Get_untracked_ChangingProductTest()
+        public void Get_untracked_ChangingProduct()
         {
             bool trackingOption = false;
 
@@ -283,10 +299,9 @@ namespace NeighborHelpTests.Tests
 
         #region PutUser Tests
 
-        ////TODO Why this test not working with Entity Framework in case during tracking disabled?
         [TestCase(true)]
-        //[TestCase(false)]
-        public void PutOrderProductTest_TrackingOption(bool trackingOption)
+        [TestCase(false)]
+        public void PutOrderProduct_trackingOption(bool trackingOption)
         {
             string originalProduct = "first";
             string newProduct = "newProd";
@@ -302,10 +317,9 @@ namespace NeighborHelpTests.Tests
                 && firstOrder.Product == newProduct);
         }
 
-        ////TODO Why this test not working with Entity Framework in case during tracking disabled?
         [TestCase(true)]
-        //[TestCase(false)]
-        public void PutOrderStatusTest_TrackingOption(bool trackingOption)
+        [TestCase(false)]
+        public void PutOrderStatus_trackingOption(bool trackingOption)
         {
             string originalStatus = OrderStatus.INITIALIZE;
             string newStatus = OrderStatus.ACTIVE;
@@ -322,7 +336,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void DenyPutNewOrderTest()
+        public void Deny_PutNewOrder()
         {
             bool result = OrderDirectory.TryPutOrder(new Order() { Product = "thomething", Author = UserProfile1 });
 

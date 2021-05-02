@@ -1,26 +1,24 @@
 using NeighborHelp.Models;
-using NeighborHelp.Services;
 using NeighborHelp.Services.Contracts;
 using NUnit.Framework;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace NeighborHelpTests.Tests
 {
     public abstract class UserDirectoryTestBase
     {
-        public abstract IUserDirectoryServise UserDirectory { get;}
+        public abstract IUserDirectoryServise UserDirectory { get; }
 
         #region AddUser tests
 
         [TestCase(0)]
         [TestCase(1)]
         [TestCase(10)]
-        public void TryAddUserTest(int countOfUser)
+        public void AddUser(int countOfUser)
         {
             bool result = true;
 
-            for(int i =1; i <= countOfUser; i++)
+            for (int i = 1; i <= countOfUser; i++)
             {
                 result = UserDirectory.TryAddUser(new User() { Login = $"user{i}" });
             }
@@ -31,7 +29,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void UniqueUserIdTest()
+        public void Unique_UserId()
         {
             UserDirectory.TryAddUser(new User() { Login = "user1" });
             UserDirectory.TryAddUser(new User() { Login = "user2" });
@@ -42,7 +40,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void DenyAddDublicateUserTest()
+        public void Deny_AddDublicateUser()
         {
             var user = new User() { Login = "user1" };
 
@@ -57,7 +55,7 @@ namespace NeighborHelpTests.Tests
         [TestCase(null)]
         [TestCase("")]
         [TestCase("    ")]
-        public void DenyInvalidOrEmptyLoginTest(string login)
+        public void Deny_InvalidOrEmptyLogin(string login)
         {
             bool result = UserDirectory.TryAddUser(new User() { Login = login });
 
@@ -65,7 +63,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void DenyAddNullUserTest()
+        public void DenyAddNullUser()
         {
             bool result = UserDirectory.TryAddUser(null);
 
@@ -77,7 +75,7 @@ namespace NeighborHelpTests.Tests
 
         #region GetUser tests
         [Test]
-        public void GetUserLoginTest()
+        public void GetUserLogin()
         {
             string login = "user1";
 
@@ -89,7 +87,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void GetUserNameTest()
+        public void GetUserName()
         {
             string userName = "superMan";
 
@@ -101,7 +99,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void GetRoleTest()
+        public void GetRole()
         {
             string role = "testRole";
 
@@ -113,7 +111,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void GetProfileNameTest()
+        public void GetProfileName()
         {
             string profileName = "Vasil";
             var profile = new UserProfile() { Name = profileName };
@@ -125,7 +123,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void GetProfileAddressTest()
+        public void GetProfileAddress()
         {
             string address = "Central park street. 25";
             var profile = new UserProfile() { Address = address };
@@ -137,7 +135,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void GetProfilePhoneNumberTest()
+        public void GetProfilePhoneNumber()
         {
             string phoneNumber = "123-25-678";
             var profile = new UserProfile() { PhoneNumber = phoneNumber };
@@ -149,18 +147,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void EqualProfileIdAndUserIdTest()
-        {
-            var profile = new UserProfile();
-            UserDirectory.TryAddUser(new User() { Login = "user1", Profile = profile });
-
-            var users = UserDirectory.GetUsers(true);
-
-            Assert.IsTrue(users[0].Profile.Id == users[0].Id);
-        }
-
-        [Test]
-        public void GetUserByPasswordTest()
+        public void GetUser_ByPassword()
         {
             string log = "user1";
             string pass = "password12345";
@@ -173,7 +160,7 @@ namespace NeighborHelpTests.Tests
         }
 
         [Test]
-        public void GetUserByIdTest()
+        public void GetUser_ById()
         {
             string log = "user1";
 
@@ -191,7 +178,7 @@ namespace NeighborHelpTests.Tests
         #region Tracking tests
 
         [Test]
-        public void Get_tracked_ChangingUserTest()
+        public void Get_tracked_ChangingUser()
         {
             bool trackingOption = true;
             string originalName = "Spider";
@@ -206,31 +193,75 @@ namespace NeighborHelpTests.Tests
             Assert.IsTrue(user.UserName == newName);
         }
 
-        [Test]
-        public void Get_untracked_ChangingUserTest()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Get_ChangingUser_trackingOption(bool tracking)
         {
-            bool trackingOption = false;
+            //Arrange
             string originalName = "Spider";
-            string newName = "Gorilla";
-
             UserDirectory.TryAddUser(new User() { UserName = originalName, Login = "user1" });
 
-            UserDirectory.GetUsers(trackingOption).Single()
-                .UserName = newName;
-            var user = UserDirectory.GetUsers(trackingOption).Single();
+            //Act
+            string newName = "Gorilla";
+            UserDirectory.GetUsers(tracking).Single().UserName = newName;
 
-            Assert.IsTrue(user.UserName == originalName);
+            var user = UserDirectory.GetUsers(tracking).Single();
+
+            //Assert
+            if (tracking)
+            {
+                Assert.IsTrue(user.UserName == newName);
+            }
+            else
+            {
+                Assert.IsTrue(user.UserName == originalName);
+            }
         }
 
         #endregion Tracking tests
 
-        //TODO add tests to check tracking option
+
         #region PutUser Tests
 
-        //TODO Why this test not working with Entity Framework in case during tracking disabled?
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public void Equal_ProfileId_And_UserId(int userNumber)
+        {
+            //Act
+            UserDirectory.TryAddUser(new User() { Login = "user1" });
+            UserDirectory.TryAddUser(new User() { Login = "user2", Profile = new UserProfile() });
+            UserDirectory.TryAddUser(new User() { Login = "user3" });
+            UserDirectory.TryAddUser(new User() { Login = "user4", Profile = new UserProfile() });
+
+            //Assert
+            var user = UserDirectory.GetUsers()[userNumber];
+            if (user.Profile == null)
+            {
+                Assert.IsFalse(UserDirectory.GetUsers()
+                    .Any(u => u.Profile != null && u.Profile.Id == user.Id));
+            }
+            else
+            {
+                Assert.IsTrue(user.Profile.Id == user.Id);
+            }
+        }
+
+        [Test]
+        public void Deny_AddUser_with_DublicatedProfile()
+        {
+            var profile = new UserProfile();
+            UserDirectory.TryAddUser(new User() { Login = "user1", Profile = profile });
+            bool result = UserDirectory.TryAddUser(new User() { Login = "user2", Profile = profile });
+
+            Assert.IsFalse(result);
+            Assert.IsFalse(UserDirectory.GetUsers().Count() == 2);
+        }
+
         [TestCase(true)]
-        //[TestCase(false)]
-        public void PutUserNameTest_trackingOption(bool useTracking)
+        [TestCase(false)]
+        public void PutUserName_trackingOption(bool useTracking)
         {
             UserDirectory.TryAddUser(new User() { Login = "user1" });
             string userName = "TestName";
@@ -243,10 +274,9 @@ namespace NeighborHelpTests.Tests
             Assert.IsTrue(result && firstUser.UserName == userName);
         }
 
-        //TODO Why this test not working with Entity Framework in case during tracking disabled?
         [TestCase(true)]
-        //[TestCase(false)]
-        public void PutUserProfileTest__trackingOption(bool useTracking)
+        [TestCase(false)]
+        public void PutUserProfile_trackingOption(bool useTracking)
         {
             UserDirectory.TryAddUser(new User() { Login = "user1" });
             string profileName = "Ilya";
@@ -263,29 +293,31 @@ namespace NeighborHelpTests.Tests
             bool result = UserDirectory.TryPutUser(firstUser);
 
             firstUser = UserDirectory.GetUsers(useTracking).Single();
-            Assert.IsTrue(result 
+            Assert.IsTrue(result
                 && firstUser.Profile.Name == profileName
                 && firstUser.Profile.Address == profileAddress
                 && firstUser.Profile.PhoneNumber == profilePhoneNumber);
         }
 
-        [Test]
-        public void DenyPutNewUserTest()
+        public void Deny_PutNewUser()
         {
             bool result = UserDirectory.TryPutUser(new User() { Login = "user1" });
 
             var userCount = UserDirectory.GetUsers().Count;
-            Assert.IsTrue(result==false && userCount == 0);
+            Assert.IsTrue(result == false && userCount == 0);
         }
 
+        //Test works only when tracking disable.
+        //In case when tracking enable, DBSet will be update immediately with changing entity.
         [Test]
-        public void DenyChangeLoginTest()
+        public void Deny_ChangeLogin()
         {
+            bool useTracking = false;
             string oldLogin = "firstUser";
 
             UserDirectory.TryAddUser(new User() { Login = oldLogin });
 
-            var firstUser = UserDirectory.GetUsers()[0];
+            var firstUser = UserDirectory.GetUsers(useTracking)[0];
             firstUser.Login = "user20";
             bool result = UserDirectory.TryPutUser(firstUser);
 
@@ -293,14 +325,17 @@ namespace NeighborHelpTests.Tests
             Assert.IsTrue(result == false && firstUser.Login == oldLogin);
         }
 
+        //Test works only when tracking disable.
+        //In case when tracking enable, DBSet will be update immediately with changing entity.
         [Test]
-        public void DenyChangeUserIdTest()
+        public void Deny_ChangeUserId()
         {
+            bool useTracking = false;
             UserDirectory.TryAddUser(new User() { Login = "firstUser" });
             UserDirectory.TryAddUser(new User() { Login = "secondUser" });
             string newUserName = "Ivan";
 
-            var firstUser = UserDirectory.GetUsers()[0];
+            var firstUser = UserDirectory.GetUsers(useTracking)[0];
             firstUser.Id++;
             firstUser.UserName = newUserName;
             bool result = UserDirectory.TryPutUser(firstUser);
