@@ -1,9 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NeighborHelp.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using NeighborHelpModels.Models;
 
 namespace NeighborHelp.Services
 {

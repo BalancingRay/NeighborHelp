@@ -1,8 +1,9 @@
-﻿using NeighborHelp.Models;
-using NeighborHelp.Models.Consts;
+﻿using NeighborHelpModels.Models;
+using NeighborHelpModels.Models.Consts;
 using NeighborHelp.Services.Contracts;
 using System.Collections.Generic;
 using System.Linq;
+using NeighborHelpModels.Utils;
 
 namespace NeighborHelp.Services
 {

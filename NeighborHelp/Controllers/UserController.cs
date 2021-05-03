@@ -1,16 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NeighborHelp.Controllers.Consts;
-using NeighborHelp.Models;
-using NeighborHelp.Models.Consts;
+using NeighborHelpModels.Models;
+using NeighborHelpModels.Models.Consts;
 using NeighborHelp.Services.Contracts;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace NeighborHelp.Controllers
 {

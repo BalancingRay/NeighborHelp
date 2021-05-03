@@ -1,14 +1,10 @@
-﻿using NeighborHelp.Models;
-using NeighborHelp.Models.Consts;
+﻿using NeighborHelpModels.Models;
+using NeighborHelpModels.Models.Consts;
 using NeighborHelp.Services;
 using NeighborHelp.Services.Contracts;
 using NeighborHelpTests.Infrostructure;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NeighborHelpTests.Tests
 {

@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NeighborHelp.Models;
-using NeighborHelp.Models.Consts;
+using NeighborHelpModels.Models;
+using NeighborHelpModels.Models.Consts;
 using NeighborHelp.Services.Contracts;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using NeighborHelpModels.Utils;
 
 namespace NeighborHelp.Services
 {

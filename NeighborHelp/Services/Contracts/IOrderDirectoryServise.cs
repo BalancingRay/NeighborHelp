@@ -1,4 +1,4 @@
-﻿using NeighborHelp.Models;
+﻿using NeighborHelpModels.Models;
 using System.Collections.Generic;
 
 namespace NeighborHelp.Services.Contracts

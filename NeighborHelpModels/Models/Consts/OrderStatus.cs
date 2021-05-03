@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace NeighborHelp.Models.Consts
+﻿namespace NeighborHelpModels.Models.Consts
 {
     public static class OrderStatus
     {

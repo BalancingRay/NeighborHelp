@@ -1,9 +1,8 @@
-﻿using System;
+﻿using NeighborHelpModels.Models;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace NeighborHelp.Models
+namespace NeighborHelpModels.Utils
 {
     public static class ModelsExtention
     {

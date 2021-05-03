@@ -5,13 +5,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Enums\" />
+    <Compile Remove="Models\Enums\**" />
+    <Content Remove="Models\Enums\**" />
+    <EmbeddedResource Remove="Models\Enums\**" />
+    <None Remove="Models\Enums\**" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NeighborHelpModels\NeighborHelpModels.csproj" />
   </ItemGroup>
 
 </Project>

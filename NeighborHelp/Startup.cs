@@ -9,10 +9,6 @@ using Microsoft.Extensions.Hosting;
 using NeighborHelp.Controllers.Consts;
 using NeighborHelp.Services;
 using NeighborHelp.Services.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace NeighborHelp
 {

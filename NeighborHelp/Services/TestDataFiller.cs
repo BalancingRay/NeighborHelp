@@ -1,5 +1,5 @@
-﻿using NeighborHelp.Models;
-using NeighborHelp.Models.Consts;
+﻿using NeighborHelpModels.Models;
+using NeighborHelpModels.Models.Consts;
 using NeighborHelp.Services.Contracts;
 
 namespace NeighborHelp.Services

@@ -1,4 +1,4 @@
-using NeighborHelp.Models;
+using NeighborHelpModels.Models;
 using NeighborHelp.Services.Contracts;
 using NUnit.Framework;
 using System.Linq;

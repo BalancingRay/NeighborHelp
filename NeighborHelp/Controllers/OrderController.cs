@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NeighborHelp.Controllers.Consts;
-using NeighborHelp.Models;
+using NeighborHelpModels.Models;
 using NeighborHelp.Services.Contracts;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace NeighborHelp.Controllers
 {
