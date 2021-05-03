@@ -94,6 +94,31 @@ namespace NeighborHelp.Services
             return false;
         }
 
+        public bool TryRemoveUser(int id, bool removeRelatedOrders)
+        {
+            var user = Users.FirstOrDefault(u => u.Id == id);
+
+            if (user == null)
+                return false;
+
+            var orders = Orders.Where(o => o.AuthorId == id).ToArray();
+
+            if (removeRelatedOrders)
+            {
+                Orders.RemoveRange(orders);
+            }
+            else if (orders.Count() > 0)
+            {
+                return false;
+            }
+
+            Users.Remove(user);
+
+            DataBase.SaveChanges();
+
+            return true;
+        }
+
         #endregion IUserDirectoryServise
 
 
@@ -109,7 +134,7 @@ namespace NeighborHelp.Services
                 order.AuthorId = order.Author?.Id ?? 0;
             }
 
-            bool isAuthorIdExist = Users.Any(u=> u.Profile.Id == order.AuthorId);
+            bool isAuthorIdExist = Users.Any(u => u.Profile.Id == order.AuthorId);
 
             bool isProductEmpty = string.IsNullOrWhiteSpace(order.Product);
 
@@ -189,6 +214,19 @@ namespace NeighborHelp.Services
             }
 
             return false;
+        }
+
+        public bool TryRemoveOrder(int id)
+        {
+            var order = Orders.FirstOrDefault(o => o.Id == id);
+
+            if (order == null)
+                return false;
+
+            Orders.Remove(order);
+            DataBase.SaveChanges();
+
+            return true;
         }
 
         #endregion IOrderDirectoryServise implementation

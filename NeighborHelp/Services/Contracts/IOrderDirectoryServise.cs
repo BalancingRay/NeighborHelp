@@ -12,5 +12,7 @@ namespace NeighborHelp.Services.Contracts
         public IList<Order> GetAllOrders(bool useTracking = ContractConsts.DefaultTracking);
 
         public bool TryPutOrder(Order order);
+
+        public bool TryRemoveOrder(int id);
     }
 }

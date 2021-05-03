@@ -10,5 +10,7 @@ namespace NeighborHelp.Services.Contracts
         public User GetUser(string login, string password);
         public IList<User> GetUsers(bool useTracking = ContractConsts.DefaultTracking);
         public bool TryPutUser(User user);
+
+        public bool TryRemoveUser(int id, bool removeRelatedOrders);
     }
 }

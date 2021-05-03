@@ -24,7 +24,7 @@ namespace NeighborHelp.Services
             if (order == null)
                 return false;
 
-            if (order.AuthorId <1)
+            if (order.AuthorId < 1)
             {
                 order.AuthorId = order.Author?.Id ?? -1;
             }
@@ -82,6 +82,17 @@ namespace NeighborHelp.Services
             }
 
             return false;
+        }
+
+        public bool TryRemoveOrder(int id)
+        {
+            var order = Orders.FirstOrDefault(o => o.Id == id);
+
+            if (order == null)
+                return false;
+
+            Orders.Remove(order);
+            return true;
         }
 
         #endregion IOrderDirectoryServise implementation
@@ -149,6 +160,25 @@ namespace NeighborHelp.Services
             }
 
             return false;
+        }
+
+        public bool TryRemoveUser(int id, bool removeRelatedOrders)
+        {
+            if (!Users.Any(u => u.Id == id))
+                return false;
+
+            if (removeRelatedOrders)
+            {
+                Orders.RemoveAll(o => o.AuthorId == id);
+            }
+            else if (Orders.Any(o => o.AuthorId == id))
+            {
+                return false;
+            }
+
+            Users.RemoveAll(u => u.Id == id);
+
+            return true;
         }
 
         #endregion IUserDirectoryServise
