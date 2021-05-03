@@ -8,6 +8,7 @@ namespace NeighborHelpTests.Tests
     public abstract class UserDirectoryTestBase
     {
         public abstract IUserDirectoryServise UserDirectory { get; }
+        public abstract IOrderDirectoryServise OrderDirectory { get; }
 
         #region AddUser tests
 
@@ -345,5 +346,84 @@ namespace NeighborHelpTests.Tests
         }
 
         #endregion PutUser tests
+
+
+        #region RemoveUser tests
+
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public void RemoveUser(int userNumber)
+        {
+            //Arrange
+            UserDirectory.TryAddUser(new User() { Login = "user1" });
+            UserDirectory.TryAddUser(new User() { Login = "user2", Profile = new UserProfile() });
+            UserDirectory.TryAddUser(new User() { Login = "user3" });
+            UserDirectory.TryAddUser(new User() { Login = "user4", Profile = new UserProfile() });
+
+            //Act
+            var user = UserDirectory.GetUsers()[userNumber];
+            bool result = UserDirectory.TryRemoveUser(user.Id, false);
+
+            //Assert
+            Assert.IsTrue(result == true);
+            Assert.IsTrue(UserDirectory.GetUsers().Count() == 3);
+            Assert.IsFalse(UserDirectory.GetUsers().Any(u => u.Id == user.Id || u.Login == user.Login));
+        }
+
+        [Test]
+        public void Deny_RemoveUser_by_incorrect_Id()
+        {
+            //Arrange
+            UserDirectory.TryAddUser(new User() { Login = "user1" });
+            var user = UserDirectory.GetUsers().Single();
+
+            //Act
+            bool result = UserDirectory.TryRemoveUser(user.Id + 100, false);
+
+            //Assert
+            Assert.IsFalse(result);
+            Assert.IsFalse(UserDirectory.GetUsers().Count() == 0);
+            Assert.IsTrue(UserDirectory.GetUsers().Any(u => u.Id == user.Id && u.Login == user.Login));
+        }
+
+        [Test]
+        public void RemoveUser_with_Orders()
+        {
+            //Arrange
+            UserDirectory.TryAddUser(new User() { Login = "user1", Profile = new UserProfile() });
+            var user = UserDirectory.GetUsers().Single();
+            OrderDirectory.TryAddOrder(new Order() { Product = "prod1", AuthorId = user.Id });
+
+            //Act
+            bool removeOrders = true;
+            bool result = UserDirectory.TryRemoveUser(user.Id, removeOrders);
+
+            //Assert
+            Assert.IsTrue(result == true);
+            Assert.IsTrue(UserDirectory.GetUsers().Count() == 0);
+            Assert.IsFalse(UserDirectory.GetUsers().Any(u => u.Id == user.Id || u.Login == user.Login));
+        }
+
+        [Test]
+        public void Deny_RemoveUser_with_Orders_without_RemoveRelatedOrders()
+        {
+            //Arrange
+            UserDirectory.TryAddUser(new User() { Login = "user1", Profile = new UserProfile() });
+            var user = UserDirectory.GetUsers().Single();
+            OrderDirectory.TryAddOrder(new Order() { Product = "prod1", AuthorId = user.Id });
+
+            //Act
+            bool removeOrder = false;
+            bool result = UserDirectory.TryRemoveUser(user.Id, removeOrder);
+
+            //Assert
+            Assert.IsFalse(result);
+            Assert.IsTrue(UserDirectory.GetUsers().Count() == 1);
+            Assert.IsTrue(UserDirectory.GetUsers().Any(u => u.Id == user.Id || u.Login == user.Login));
+        }
+
+        #endregion RemoveUser tests
     }
 }

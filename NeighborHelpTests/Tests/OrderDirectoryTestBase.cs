@@ -17,7 +17,7 @@ namespace NeighborHelpTests.Tests
         protected abstract UserProfile UserProfile2 { get; }
 
         protected UserProfile CreateDefaultUserProfile(
-            string login = "user1", string password = "12345", string profileName = "Andrei", 
+            string login = "user1", string password = "12345", string profileName = "Andrei",
             string phoneNumber = "100-200-300", string address = "Main str.128")
         {
             var user = new User()
@@ -53,7 +53,7 @@ namespace NeighborHelpTests.Tests
 
             for (int i = 1; i <= countOfOrder; i++)
             {
-                result = OrderDirectory.TryAddOrder(new Order() {Product = $"product{i}", Author = UserProfile1});
+                result = OrderDirectory.TryAddOrder(new Order() { Product = $"product{i}", Author = UserProfile1 });
             }
 
             var orders = OrderDirectory.GetAllOrders();
@@ -98,7 +98,7 @@ namespace NeighborHelpTests.Tests
         public void Deny_AddDublicateOrders()
         {
             var order = new Order() { Product = "vegetables", Author = UserProfile1 };
-            OrderDirectory.TryAddOrder(new Order() );
+            OrderDirectory.TryAddOrder(new Order());
             OrderDirectory.TryAddOrder(new Order() { Product = "books", Author = UserProfile2 });
 
             var orders = OrderDirectory.GetAllOrders();
@@ -129,7 +129,7 @@ namespace NeighborHelpTests.Tests
         [Test]
         public void Deny_AddOrder_withot_Author()
         {
-            bool result = OrderDirectory.TryAddOrder(new Order() {Product="something" });
+            bool result = OrderDirectory.TryAddOrder(new Order() { Product = "something" });
 
             Assert.IsTrue(result == false);
             Assert.IsTrue(OrderDirectory.GetAllOrders().Count == 0);
@@ -147,7 +147,7 @@ namespace NeighborHelpTests.Tests
         [Test]
         public void Deny_AddOrder_with_incorrect_AuthorId()
         {
-            bool result = OrderDirectory.TryAddOrder(new Order() { Product = "something", AuthorId = 20});
+            bool result = OrderDirectory.TryAddOrder(new Order() { Product = "something", AuthorId = 20 });
 
             Assert.IsTrue(result == false);
             Assert.IsTrue(OrderDirectory.GetAllOrders().Count == 0);
@@ -173,7 +173,7 @@ namespace NeighborHelpTests.Tests
         {
             string description = "It's the best car in our city";
 
-            OrderDirectory.TryAddOrder(new Order() { Product="car", ProductDescription = description, Author = UserProfile1 });
+            OrderDirectory.TryAddOrder(new Order() { Product = "car", ProductDescription = description, Author = UserProfile1 });
 
             var orders = OrderDirectory.GetAllOrders();
 
@@ -185,7 +185,7 @@ namespace NeighborHelpTests.Tests
         {
             string status = OrderStatus.ACTIVE;
 
-            OrderDirectory.TryAddOrder(new Order() {Status = status, Product = "car", Author = UserProfile1 });
+            OrderDirectory.TryAddOrder(new Order() { Status = status, Product = "car", Author = UserProfile1 });
 
             var orders = OrderDirectory.GetAllOrders();
 
@@ -195,7 +195,7 @@ namespace NeighborHelpTests.Tests
         [Test]
         public void GetDefaultOrderStatus()
         {
-            OrderDirectory.TryAddOrder(new Order() {Product = "car", Author = UserProfile1 });
+            OrderDirectory.TryAddOrder(new Order() { Product = "car", Author = UserProfile1 });
 
             var orders = OrderDirectory.GetAllOrders();
 
@@ -229,9 +229,9 @@ namespace NeighborHelpTests.Tests
         [Test]
         public void GetOrders_ByAuthorId()
         {
-            OrderDirectory.TryAddOrder(new Order() { Author = UserProfile1, Product = "user_1_prod_1"});
-            OrderDirectory.TryAddOrder(new Order() { Author = UserProfile1, Product = "user_1_prod_2" });            
-            
+            OrderDirectory.TryAddOrder(new Order() { Author = UserProfile1, Product = "user_1_prod_1" });
+            OrderDirectory.TryAddOrder(new Order() { Author = UserProfile1, Product = "user_1_prod_2" });
+
             OrderDirectory.TryAddOrder(new Order() { Author = UserProfile2, Product = "user_2_prod_1" });
 
             var user1orders = OrderDirectory.GetOrders(UserProfile1.Id);
@@ -266,7 +266,7 @@ namespace NeighborHelpTests.Tests
         {
             bool trackingOption = true;
 
-            string originalProduct = "cherry"; 
+            string originalProduct = "cherry";
             string newProduct = "banana";
 
             OrderDirectory.TryAddOrder(new Order() { Product = originalProduct, Author = UserProfile1 });
@@ -297,7 +297,7 @@ namespace NeighborHelpTests.Tests
 
         #endregion Tracking tests
 
-        #region PutUser Tests
+        #region PutOrder tests
 
         [TestCase(true)]
         [TestCase(false)]
@@ -305,7 +305,7 @@ namespace NeighborHelpTests.Tests
         {
             string originalProduct = "first";
             string newProduct = "newProd";
-            OrderDirectory.TryAddOrder(new Order() { Product = originalProduct, Author = UserProfile1 });         
+            OrderDirectory.TryAddOrder(new Order() { Product = originalProduct, Author = UserProfile1 });
 
 
             var firstOrder = OrderDirectory.GetAllOrders(trackingOption).Single();
@@ -359,7 +359,7 @@ namespace NeighborHelpTests.Tests
 
             var firstOrder = OrderDirectory.GetAllOrders(trackingOption)[0];
             firstOrder.Id++;
-            firstOrder.Product = newProduct ;
+            firstOrder.Product = newProduct;
             bool result = OrderDirectory.TryPutOrder(firstOrder);
 
             firstOrder = OrderDirectory.GetAllOrders(trackingOption)[0];
@@ -367,6 +367,48 @@ namespace NeighborHelpTests.Tests
             Assert.IsTrue(firstOrder.Product != newProduct);
         }
 
-        #endregion PutUser tests
+        #endregion PutOrder tests
+
+        #region RemoveOrder tests
+
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public void RemoveOrder(int number)
+        {
+            //Arrange
+            OrderDirectory.TryAddOrder(new Order() { Product = "prod1", Author = UserProfile1 });
+            OrderDirectory.TryAddOrder(new Order() { Product = "prod2", Author = UserProfile2 });
+            OrderDirectory.TryAddOrder(new Order() { Product = "prod3", Author = UserProfile2 });
+            OrderDirectory.TryAddOrder(new Order() { Product = "prod4", Author = UserProfile1 });
+
+            //Act
+            var order = OrderDirectory.GetAllOrders()[number];
+            bool result = OrderDirectory.TryRemoveOrder(order.Id);
+
+            //Assert
+            Assert.IsTrue(result == true);
+            Assert.IsTrue(OrderDirectory.GetAllOrders().Count() == 3);
+            Assert.IsFalse(OrderDirectory.GetAllOrders().Any(o => o.Id == order.Id || o.Product == order.Product));
+        }
+
+        [Test]
+        public void Deny_RemoveOrder_by_incorrect_Id()
+        {
+            //Arrange
+            OrderDirectory.TryAddOrder(new Order() { Product = "prod1", Author = UserProfile1 });
+
+            //Act
+            var order = OrderDirectory.GetAllOrders().Single();
+            bool result = OrderDirectory.TryRemoveOrder(order.Id + 25);
+
+            //Assert
+            Assert.IsFalse(result);
+            Assert.IsFalse(OrderDirectory.GetAllOrders().Count() == 0);
+            Assert.IsTrue(OrderDirectory.GetAllOrders().Any(o => o.Id == order.Id || o.Product == order.Product));
+        }
+
+        #endregion RemoveOrder tests
     }
 }

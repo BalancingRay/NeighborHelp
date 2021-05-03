@@ -9,14 +9,16 @@ namespace NeighborHelpTests.Tests
 {
     public class EntityUserDirectoryTest : UserDirectoryTestBase
     {
-        private IUserDirectoryServise _userDirectory;
-        public override IUserDirectoryServise UserDirectory => _userDirectory;
+        private EntityUserOrderDirectory _directoryService;
+        public override IUserDirectoryServise UserDirectory => _directoryService;
+
+        public override IOrderDirectoryServise OrderDirectory => _directoryService;
 
         [SetUp]
         public void Setup()
         {
             var context = DataBaseBuilder.BuildDataBaseContext();
-            _userDirectory = new EntityUserOrderDirectory(context);
+            _directoryService = new EntityUserOrderDirectory(context);
         }
 
         [TestCase(false)]

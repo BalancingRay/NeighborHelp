@@ -11,13 +11,15 @@ namespace NeighborHelpTests.Tests
 {
     public class MemoryUserDirectoryTest:UserDirectoryTestBase
     {
-        private IUserDirectoryServise _UserDirectoryInMemory;
-        public override IUserDirectoryServise UserDirectory => _UserDirectoryInMemory;
+        private MemoryUserOrderDirectory _directoryInMemory;
+        public override IUserDirectoryServise UserDirectory => _directoryInMemory;
+
+        public override IOrderDirectoryServise OrderDirectory => _directoryInMemory;
 
         [SetUp]
         public void Setup()
         {
-            _UserDirectoryInMemory = new MemoryUserOrderDirectory();
+            _directoryInMemory = new MemoryUserOrderDirectory();
         }
     }
 }
