@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeighborHelp", "NeighborHelp\NeighborHelp.csproj", "{C21EC623-28CA-4ABF-B876-20A864F821BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeighborHelpTests", "NeighborHelpTests\NeighborHelpTests.csproj", "{2A8052FB-C83C-4FDD-9E6F-0410978D6B36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeighborHelpTests", "NeighborHelpTests\NeighborHelpTests.csproj", "{2A8052FB-C83C-4FDD-9E6F-0410978D6B36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeighborHelpModels", "NeighborHelpModels\NeighborHelpModels.csproj", "{0098AF75-60DC-4BFF-A059-AAE418BB2F18}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{2A8052FB-C83C-4FDD-9E6F-0410978D6B36}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A8052FB-C83C-4FDD-9E6F-0410978D6B36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A8052FB-C83C-4FDD-9E6F-0410978D6B36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0098AF75-60DC-4BFF-A059-AAE418BB2F18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0098AF75-60DC-4BFF-A059-AAE418BB2F18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0098AF75-60DC-4BFF-A059-AAE418BB2F18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0098AF75-60DC-4BFF-A059-AAE418BB2F18}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
