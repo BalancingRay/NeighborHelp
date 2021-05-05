@@ -4,8 +4,9 @@ using NeighborHelp.Controllers.Consts;
 using NeighborHelpModels.Models;
 using NeighborHelp.Services.Contracts;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
+using NeighborHelp.Utils;
+using NeighborHelpModels.Models.Consts;
+using Microsoft.AspNetCore.Http;
 
 namespace NeighborHelp.Controllers
 {
@@ -63,6 +64,17 @@ namespace NeighborHelp.Controllers
                 return new NoContentResult();
             }
 
+            int originalAuthorId = _orderDirectory.GetOrder(order.Id)?.AuthorId ?? 0;
+
+            bool isNotCurrentUser = AuthorizationHelper.TryGetCurrentUserId(HttpContext?.User, out int id)
+                && id != originalAuthorId;
+            bool isNotAdmin = AuthorizationHelper.GetCurrentUserRole(HttpContext?.User) != UserRoles.ADMIN;
+
+            if (isNotCurrentUser || !isNotAdmin)
+            {
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+            }
+
             bool succeed = _orderDirectory.TryPutOrder(order);
 
             if (succeed)
@@ -85,10 +97,9 @@ namespace NeighborHelp.Controllers
                 return new NoContentResult();
             }
 
-            string claimId = HttpContext?.User?.Claims?.FirstOrDefault(cl => cl.Type == ClaimsIdentity.DefaultNameClaimType)?.Value;
             bool succeed = false;
 
-            if (int.TryParse(claimId, out int id))
+            if (AuthorizationHelper.TryGetCurrentUserId(HttpContext?.User, out int id))
             {
                 order.AuthorId = id;
                 succeed = _orderDirectory.TryAddOrder(order);

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using NeighborHelpModels.Models;
 using NeighborHelp.Services.Contracts;
-using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +11,9 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System;
+using Microsoft.AspNetCore.Http;
+using NeighborHelp.Utils;
+using NeighborHelpModels.ControllersModel;
 
 namespace NeighborHelp.Controllers
 {
@@ -35,15 +37,9 @@ namespace NeighborHelp.Controllers
             return Content("Please, use Login.html page or use Post method Login(string login, string password) manyally");
         }
 
-        public class AuthData
-        {
-            public string Login { get; set; }
-            public string Password { get; set; }
-        }
-
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> LoginJson([FromBody] AuthData loginData)
+        public IActionResult LoginJson([FromBody] AuthentificateData loginData)
         {
             if (string.IsNullOrEmpty(loginData?.Login) || string.IsNullOrEmpty(loginData?.Password))
             {
@@ -56,7 +52,7 @@ namespace NeighborHelp.Controllers
             {
                 string tokenString = AuthenticateByJWT(user);
 
-                return new OkObjectResult(new { token = tokenString });
+                return new OkObjectResult(new AuthentificateToken() {Token = tokenString });
             }
             else
             {
@@ -89,13 +85,8 @@ namespace NeighborHelp.Controllers
 
         private async Task AuthenticateByCookie(User user)
         {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Id.ToString()),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role)
-            };
-
-            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType,
+            var claims = AuthorizationHelper.GenerateUserClaims(user);
+            var id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType,
                 ClaimsIdentity.DefaultRoleClaimType);
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
@@ -103,28 +94,27 @@ namespace NeighborHelp.Controllers
 
         private string AuthenticateByJWT(User user)
         {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Id.ToString()),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role)
-            };
-
-            //var claims = new[]
-            //       {
-            //            new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-            //            new Claim(JwtRegisteredClaimNames.Jti, user.Id.ToString()),
-            //        };
-
+            var claims = AuthorizationHelper.GenerateUserClaims(user);
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Tokens:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(_configuration["Tokens:Issuer"],
-                _configuration["Tokens:Issuer"],
-                claims,
-                expires: DateTime.Now.AddMinutes(5),
+
+            string issuer = _configuration["Tokens:Issuer"];
+            double expiresMinumes = 5;
+            if (double.TryParse(_configuration["Tokens:ExpiresMinumes"], out double result))
+            {
+                expiresMinumes = result;
+            }
+
+            var token = new JwtSecurityToken(
+                issuer: issuer,
+                audience: issuer,
+                claims: claims,
+                notBefore: DateTime.Now,
+                expires: DateTime.Now.AddMinutes(expiresMinumes),
                 signingCredentials: creds);
 
-            string tokenString = new JwtSecurityTokenHandler().WriteToken(token) ;
+            string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
             return tokenString;
         }
     }
