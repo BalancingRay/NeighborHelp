@@ -18,6 +18,7 @@ using NeighborHelp.Services.Contracts;
 using System;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace NeighborHelp
 {
@@ -42,11 +43,6 @@ namespace NeighborHelp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers()
-            //    opts =>
-            //{
-            //    if(!UseAuthentification)
-            //    opts.Filters.Add(new AllowAnonymousFilter());
-            //})
                 .AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
@@ -75,7 +71,7 @@ namespace NeighborHelp
                     break;
 
                 case AuthentificationType.JWT:
-                    services.AddAuthentication()
+                    services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                    .AddJwtBearer(options =>
                    {
                        options.RequireHttpsMetadata = false;
