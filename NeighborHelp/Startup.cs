@@ -1,14 +1,23 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using NeighborHelp.Utils;
 using Microsoft.Extensions.Hosting;
 using NeighborHelp.Controllers.Consts;
+using NeighborHelp.Properties.Enums;
 using NeighborHelp.Services;
 using NeighborHelp.Services.Contracts;
+using System;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace NeighborHelp
 {
@@ -16,34 +25,78 @@ namespace NeighborHelp
     {
         private const string ConnectionPropertyName = "DefaultConnection";
         private bool ClearDBOnStart = true;
-        private bool UseSQLDatabase = true;
+        private bool UseInMemotyDB = false;
+        private AuthentificationType authentificationType;
+
         public IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            ClearDBOnStart = Configuration.ReadBoolProperty(nameof(ClearDBOnStart), ClearDBOnStart);
+            UseInMemotyDB = Configuration.ReadBoolProperty(nameof(UseInMemotyDB), UseInMemotyDB);
+            authentificationType = Configuration.ReadAuthentificationType();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers()
+            //    opts =>
+            //{
+            //    if(!UseAuthentification)
+            //    opts.Filters.Add(new AllowAnonymousFilter());
+            //})
                 .AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
-                {
-                    options.LoginPath = new PathString(PathConst.LOGIN_PATH);
-                    options.AccessDeniedPath = new PathString(PathConst.LOGIN_PATH);
-                });
-            services.AddAuthorization();
+            ConfigureAuthentification(services);
+            ConfigureDirectoryServices(services);
 
-            ConfigureDirectory(services);
+            services.AddAuthorization();
         }
 
-        private IServiceCollection ConfigureDirectory(IServiceCollection services)
+        private IServiceCollection ConfigureAuthentification(IServiceCollection services)
         {
-            if (UseSQLDatabase)
+            switch (authentificationType)
+            {
+                case AuthentificationType.NONE:
+                    services.AddSingleton<IAuthorizationHandler, AllowAnonymous>();
+                    services.TryAddSingleton<IPolicyEvaluator, DisableAuthenticationPolicyEvaluator>();
+                    break;
+
+                case AuthentificationType.COOKIES:
+                    services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                    .AddCookie(options =>
+                    {
+                        options.LoginPath = new PathString(PathConst.LOGIN_PATH);
+                        options.AccessDeniedPath = new PathString(PathConst.LOGIN_PATH);
+                    });
+                    break;
+
+                case AuthentificationType.JWT:
+                    services.AddAuthentication()
+                   .AddJwtBearer(options =>
+                   {
+                       options.RequireHttpsMetadata = false;
+                       options.SaveToken = true;
+
+                       options.TokenValidationParameters = new TokenValidationParameters()
+                       {
+                           ValidIssuer = Configuration["Tokens:Issuer"],
+                           ValidAudience = Configuration["Tokens:Issuer"],
+                           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
+                       };
+                   });
+                    break;
+            }
+
+            return services;
+        }
+
+        private IServiceCollection ConfigureDirectoryServices(IServiceCollection services)
+        {
+            if (!UseInMemotyDB)
             {
                 string connection = Configuration.GetConnectionString(ConnectionPropertyName);
 
@@ -54,18 +107,18 @@ namespace NeighborHelp
                         .UseSqlServer(connection)
                         .Options;
 
-                services.AddScoped(typeof(IOrderDirectoryServise), 
-                    (servProvider)=> 
+                services.AddScoped(typeof(IOrderDirectoryServise),
+                    (servProvider) =>
                     new EntityUserOrderDirectory(new ApplicationContext(options)));
-                services.AddScoped(typeof(IUserDirectoryServise), 
-                    (servProvider) => 
+                services.AddScoped(typeof(IUserDirectoryServise),
+                    (servProvider) =>
                     new EntityUserOrderDirectory(new ApplicationContext(options)));
 
                 //Fill start data
                 ApplicationContext applicationContext = new ApplicationContext(options, ClearDBOnStart);
                 var directoryService = new EntityUserOrderDirectory(applicationContext);
                 var testData = new TestDataFiller(directoryService, directoryService);
-                testData.FillIfEmpty();         
+                testData.FillIfEmpty();
             }
             else
             {
@@ -74,6 +127,9 @@ namespace NeighborHelp
 
                 services.AddSingleton(typeof(IOrderDirectoryServise), directoryService);
                 services.AddSingleton(typeof(IUserDirectoryServise), directoryService);
+
+                var testData = new TestDataFiller(directoryService, directoryService);
+                testData.FillIfEmpty();
             }
 
             return services;
@@ -88,8 +144,8 @@ namespace NeighborHelp
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
-
             app.UseHttpsRedirection();
+
             app.UseRouting();
 
             app.UseAuthentication();
