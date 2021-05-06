@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace NeighborHelpModels.Models
+﻿namespace NeighborHelpModels.Models
 {
     public class Order
     {
@@ -9,8 +7,7 @@ namespace NeighborHelpModels.Models
         public int AuthorId { set; get; }
 
         public UserProfile Author { set; get; }
-        [NotMapped]
-        public UserProfile Client { set; get; }
+        public int ClientId { set; get; }
 
         public string Product { set; get; }
         public string ProductDescription { set; get; }

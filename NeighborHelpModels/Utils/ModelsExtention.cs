@@ -87,6 +87,7 @@ namespace NeighborHelpModels.Utils
             target.AuthorId = source.AuthorId;
             target.OrderType = source.OrderType;
             target.Status = source.Status;
+            target.ClientId = source.ClientId;
 
             if (source.Author != null)
             {
