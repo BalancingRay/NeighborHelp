@@ -14,6 +14,7 @@ using System;
 using Microsoft.AspNetCore.Http;
 using NeighborHelp.Utils;
 using NeighborHelpModels.ControllersModel;
+using NeighborHelpAPI.Consts;
 
 namespace NeighborHelp.Controllers
 {
@@ -34,10 +35,11 @@ namespace NeighborHelp.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            return Content("Please, use Login.html page or use Post method Login(string login, string password) manyally");
+            return Content("Please, use Login.html page or use Post method Login(string login, string password)");
         }
 
         [HttpPost]
+        [ActionName(AuthenticationConsts.LOGIN_BY_JWT)]
         [AllowAnonymous]
         public IActionResult LoginJson([FromBody] AuthentificateData loginData)
         {
@@ -61,6 +63,7 @@ namespace NeighborHelp.Controllers
         }
 
         [HttpPost]
+        [ActionName(AuthenticationConsts.LOGIN_BY_COOKIES)]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromForm] string login, [FromForm] string password)
         {

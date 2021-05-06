@@ -4,21 +4,19 @@ using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NeighborHelp.Utils;
 using Microsoft.Extensions.Hosting;
-using NeighborHelp.Controllers.Consts;
 using NeighborHelp.Properties.Enums;
 using NeighborHelp.Services;
 using NeighborHelp.Services.Contracts;
-using System;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using NeighborHelpAPI.Consts;
 
 namespace NeighborHelp
 {
@@ -65,8 +63,8 @@ namespace NeighborHelp
                     services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddCookie(options =>
                     {
-                        options.LoginPath = new PathString(PathConst.LOGIN_PATH);
-                        options.AccessDeniedPath = new PathString(PathConst.LOGIN_PATH);
+                        options.LoginPath = new PathString(PathConst.LOGIN_BY_COOKIES_PATH);
+                        options.AccessDeniedPath = new PathString(PathConst.LOGIN_BY_COOKIES_PATH);
                     });
                     break;
 
