@@ -70,7 +70,7 @@ namespace NeighborHelp.Controllers
                 && id != originalAuthorId;
             bool isNotAdmin = AuthorizationHelper.GetCurrentUserRole(HttpContext?.User) != UserRoles.ADMIN;
 
-            if (isNotCurrentUser || !isNotAdmin)
+            if (isNotCurrentUser && isNotAdmin)
             {
                 return new StatusCodeResult(StatusCodes.Status403Forbidden);
             }
