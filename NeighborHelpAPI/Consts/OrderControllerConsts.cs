@@ -1,4 +1,4 @@
-﻿namespace NeighborHelp.Controllers.Consts
+﻿namespace NeighborHelpAPI.Consts
 {
     public static class OrderControllerConsts
     {
