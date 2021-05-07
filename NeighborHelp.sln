@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeighborHelpTests", "Neighb
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeighborHelpModels", "NeighborHelpModels\NeighborHelpModels.csproj", "{0098AF75-60DC-4BFF-A059-AAE418BB2F18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeighborHelpAPI", "NeighborHelpAPI\NeighborHelpAPI.csproj", "{16EEA3A3-0B28-4FB2-9C3D-5C4FE5460F15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeighborHelpAPI", "NeighborHelpAPI\NeighborHelpAPI.csproj", "{16EEA3A3-0B28-4FB2-9C3D-5C4FE5460F15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

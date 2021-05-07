@@ -1,37 +1,12 @@
 ﻿using NeighborHelpModels.Models;
+using NeighborHelpModels.Models.Consts;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NeighborHelpModels.Utils
+namespace NeighborHelpModels.Extentions
 {
-    public static class ModelsExtention
+    public static class OrderExtention
     {
-        public static User Dublicate(this User user)
-        {
-            if (user == null)
-                return null;
-
-            var newUser = new User();
-            newUser.UpdateFrom(user);           
-
-            return newUser;
-        }
-
-        public static IList<User> Dublicate(this IEnumerable<User> users)
-        {
-            var newUsers = new List<User>();
-
-            if (users == null || users.Count() == 0)
-                return newUsers;
-
-            foreach (var item in users)
-            {
-                newUsers.Add(Dublicate(item));
-            }
-
-            return newUsers;
-        }
-
         public static Order Dublicate(this Order order)
         {
             if (order == null)
@@ -58,26 +33,6 @@ namespace NeighborHelpModels.Utils
             return newOrders;
         }
 
-        public static void UpdateFrom(this User target, User source)
-        {
-            target.Id = source.Id;
-            target.UserName = source.UserName;
-            target.Login = source.Login;
-            target.Password = source.Password;
-            target.Role = source.Role;
-
-            if (source.Profile != null)
-            {
-                if (target.Profile == null)
-                    target.Profile = new UserProfile();
-
-                target.Profile.Name = source.Profile.Name;
-                target.Profile.Address = source.Profile.Address;
-                target.Profile.PhoneNumber = source.Profile.PhoneNumber;
-                target.Profile.Id = source.Profile.Id;
-            }
-        }
-
         public static void UpdateFrom(this Order target, Order source)
         {
             target.Id = source.Id;
@@ -99,6 +54,26 @@ namespace NeighborHelpModels.Utils
                 target.Author.Address = source.Author.Address;
                 target.Author.PhoneNumber = source.Author.PhoneNumber;
             }
+        }
+
+        public static IEnumerable<string> GetAllTypes(this Order obj)
+        {
+            return new string[] 
+            { 
+                OrderTypes.SELL, 
+                OrderTypes.BUY 
+            };
+        }
+
+        public static IEnumerable<string> GetAllStatuses(this Order obj)
+        {
+            return new string[] 
+            { 
+                OrderStatus.INITIALIZE, 
+                OrderStatus.ACTIVE, 
+                OrderStatus.CLOSED, 
+                OrderStatus.FINISHED 
+            };
         }
     }
 }
