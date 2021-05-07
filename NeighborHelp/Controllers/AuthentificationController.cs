@@ -54,7 +54,11 @@ namespace NeighborHelp.Controllers
             {
                 string tokenString = AuthenticateByJWT(user);
 
-                return new OkObjectResult(new AuthentificateToken() {Token = tokenString });
+                return new OkObjectResult(new AuthentificateToken() 
+                {
+                    UserId = user.Id.ToString(),
+                    Token = tokenString 
+                });
             }
             else
             {
