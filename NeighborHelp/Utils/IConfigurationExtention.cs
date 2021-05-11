@@ -9,13 +9,15 @@ namespace NeighborHelp.Utils
 {
     public static class IConfigurationExtention
     {
+        private readonly static string boolValue = true.ToString();
+
         public static void InitializeBoolProperty(this IConfiguration configuration, string propertyName, ref bool value)
         {
             string textValue = configuration.GetSection(propertyName)?.Value;
 
             if (!string.IsNullOrEmpty(textValue))
             {
-                value = textValue == "true";
+                value = boolValue.Equals(textValue, StringComparison.OrdinalIgnoreCase);
             }
         }
 
@@ -26,7 +28,7 @@ namespace NeighborHelp.Utils
             if (string.IsNullOrEmpty(textValue))
                 return defaultValue;
 
-            return textValue == "true";
+            return  boolValue.Equals(textValue, StringComparison.OrdinalIgnoreCase);
 
         }
 
@@ -38,7 +40,7 @@ namespace NeighborHelp.Utils
 
             foreach (var item in data)
             {
-                if (textValue?.ToUpper() == item.ToString().ToUpper())
+                if (item.ToString().Equals(textValue, StringComparison.OrdinalIgnoreCase))
                 {
                     return item;
                 }
