@@ -4,6 +4,7 @@
     {
         NONE,
         COOKIES,
-        JWT
+        JWT,
+        COOKIES_AND_JWT
     }
 }

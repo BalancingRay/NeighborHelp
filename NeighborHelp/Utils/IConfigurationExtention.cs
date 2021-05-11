@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using NeighborHelp.Properties.Enums;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace NeighborHelp.Utils
 {
@@ -28,13 +25,12 @@ namespace NeighborHelp.Utils
             if (string.IsNullOrEmpty(textValue))
                 return defaultValue;
 
-            return  boolValue.Equals(textValue, StringComparison.OrdinalIgnoreCase);
-
+            return boolValue.Equals(textValue, StringComparison.OrdinalIgnoreCase);
         }
 
-        public static AuthentificationType ReadAuthentificationType(this IConfiguration configuration)
+        public static AuthentificationType ReadAuthentificationType(this IConfiguration configuration, string propertyName)
         {
-            string textValue = configuration.GetSection(nameof(AuthentificationType))?.Value;
+            string textValue = configuration.GetSection(propertyName)?.Value;
 
             var data = Enum.GetValues<AuthentificationType>();
 
