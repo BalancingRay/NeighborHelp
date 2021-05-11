@@ -70,7 +70,8 @@ namespace NeighborHelpModels.Extentions
             return new string[] 
             { 
                 OrderStatus.INITIALIZE, 
-                OrderStatus.ACTIVE, 
+                OrderStatus.ACTIVE,
+                OrderStatus.RESPONSED,
                 OrderStatus.CLOSED, 
                 OrderStatus.FINISHED 
             };

@@ -7,10 +7,11 @@
         private const string ORDER_CONTROLLER = "ORDER";
         private const string LOGIN_CONTROLLER = "Authentification";
 
-        private static readonly string USER_API = $"/{API_AREA}/{USER_CONTROLLER}/";
-
         public static readonly string LOGIN_BY_JWT_PATH = $"/{LOGIN_CONTROLLER}/{AuthenticationConsts.LOGIN_BY_JWT}";
         public static readonly string LOGIN_BY_COOKIES_PATH = $"/{LOGIN_CONTROLLER}/{AuthenticationConsts.LOGIN_BY_COOKIES}";
+
+        private static readonly string USER_API = $"/{API_AREA}/{USER_CONTROLLER}/";
+
         public static readonly string ADD_USER_PATH = $"{USER_API}{UserControllerConsts.ADD_USER}";
         public static readonly string CURRENT_USER_PATH = $"{USER_API}{UserControllerConsts.GET_CURRENT_ACTION}";
         public static readonly string GET_USER_PATH = $"{USER_API}{UserControllerConsts.GET_ACTION}";
