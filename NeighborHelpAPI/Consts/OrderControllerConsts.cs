@@ -8,5 +8,6 @@
         public const string GET_ACTION = "GET";
         public const string ADD_ACTION = "ADD";
         public const string PUT_ACTION = "PUT";
+        public const string RESPONSE_ACTION = "RESPONCE";
     }
 }

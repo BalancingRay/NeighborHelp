@@ -24,5 +24,6 @@
         public static readonly string GET_ORDERS_PATH = $"{ORDER_API}{OrderControllerConsts.GET_ALL_ACTION}";
         public static readonly string GET_ORDERS_BY_USER_PATH = $"{ORDER_API}{OrderControllerConsts.GET_BY_USER_ACTION}";
         public static readonly string PUT_ORDER_PATH = $"{ORDER_API}{OrderControllerConsts.PUT_ACTION}";
+        public static readonly string RESPONCE_ORDER_PATH = $"{ORDER_API}{OrderControllerConsts.RESPONSE_ACTION}";
     }
 }

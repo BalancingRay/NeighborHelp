@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>...</Description>
+    <Description>Models for NeighborHelp project</Description>
     <Product>NeighborHelpModels</Product>
-    <Version>1.0.1.1</Version>
+    <Version>1.0.1.2</Version>
   </PropertyGroup>
 
 </Project>

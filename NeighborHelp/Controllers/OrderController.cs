@@ -30,7 +30,7 @@ namespace NeighborHelp.Controllers
         }
 
         [HttpGet("{userId}")]
-        [Authorize]
+        //[Authorize]
         [ActionName(OrderControllerConsts.GET_BY_USER_ACTION)]
         public ActionResult<IEnumerable<Order>> GetByUser(int userId)
         {
@@ -112,6 +112,91 @@ namespace NeighborHelp.Controllers
             else
             {
                 return new BadRequestResult();
+            }
+        }
+
+
+        [Authorize]
+        [HttpPut]
+        [ActionName(OrderControllerConsts.RESPONSE_ACTION)]
+        public ActionResult<Order> Responce(Order order)
+        {
+            if (order == null)
+            {
+                return new NoContentResult();
+            }
+
+            bool hasAutorId = AuthorizationHelper.TryGetCurrentUserId(HttpContext?.User, out int authorId);
+
+            if (!hasAutorId)
+            {
+                return new StatusCodeResult(StatusCodes.Status401Unauthorized);
+            }
+
+            var originalOrder = _orderDirectory.GetOrder(order.Id);
+
+            bool isOrderChanged = !IsEquals(originalOrder, order);
+
+            bool isNotValidStatus = string.Compare(originalOrder?.Status, OrderStatus.ACTIVE) != 0;
+
+            if (isOrderChanged || isNotValidStatus)
+            {
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+            }
+
+            order.ClientId = authorId;
+            order.Status = OrderStatus.RESPONSED;
+
+            bool succeed = _orderDirectory.TryPutOrder(order);
+
+            if (succeed)
+            {
+                return new ActionResult<Order>(order);
+            }
+            else
+            {
+                return new BadRequestResult();
+            }
+        }
+
+        //TODO update extension or add IEqutable interface
+        private bool IsEquals(Order a, Order b)
+        {
+            if (a != null && b != null)
+            {
+                bool isEqual = a.Id == b.Id
+                  && a.Product == b.Product
+                  && a.ProductDescription == b.ProductDescription
+                  && a.Status == b.Status
+                  && a.OrderType == b.OrderType;
+
+                if (!isEqual)
+                    return false;
+
+                if (a.Author != null && b.Author != null)
+                {
+                    isEqual = a.Author.Name == b.Author.Name
+                        && a.Author.Address == b.Author.Address
+                        && a.Author.PhoneNumber == b.Author.PhoneNumber;
+
+                    return isEqual;
+                }
+                else if (a.Author == null && b.Author == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else if (a == null && b == null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
     }
