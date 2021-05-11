@@ -102,16 +102,11 @@ namespace NeighborHelp.Controllers
         private string AuthenticateByJWT(User user)
         {
             var claims = AuthorizationHelper.GenerateUserClaims(user);
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Tokens:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetTokenKey()));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-
-            string issuer = _configuration["Tokens:Issuer"];
-            double expiresMinumes = 5;
-            if (double.TryParse(_configuration["Tokens:ExpiresMinumes"], out double result))
-            {
-                expiresMinumes = result;
-            }
+            string issuer = _configuration.GetTokenIssuer();
+            double expiresMinumes = _configuration.GetTokenTimeout();
 
             var token = new JwtSecurityToken(
                 issuer: issuer,

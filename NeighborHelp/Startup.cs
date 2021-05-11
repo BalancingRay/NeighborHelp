@@ -9,7 +9,7 @@ namespace NeighborHelp
 {
     public class Startup
     {
-        private const string AuthenticationConfigurationArea = "Authentication";
+        private static string AuthenticationConfigurationArea = AuthenticationConfigurationExtention.ConfigurationArea;
         private const string DataBaseConfigurationArea = "DataBase";
 
         public IConfiguration Configuration { get; }

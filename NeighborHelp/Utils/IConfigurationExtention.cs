@@ -27,22 +27,5 @@ namespace NeighborHelp.Utils
 
             return boolValue.Equals(textValue, StringComparison.OrdinalIgnoreCase);
         }
-
-        public static AuthentificationType ReadAuthentificationType(this IConfiguration configuration, string propertyName)
-        {
-            string textValue = configuration.GetSection(propertyName)?.Value;
-
-            var data = Enum.GetValues<AuthentificationType>();
-
-            foreach (var item in data)
-            {
-                if (item.ToString().Equals(textValue, StringComparison.OrdinalIgnoreCase))
-                {
-                    return item;
-                }
-            }
-
-            return AuthentificationType.NONE;
-        }
     }
 }

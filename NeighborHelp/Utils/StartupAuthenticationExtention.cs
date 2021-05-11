@@ -16,13 +16,9 @@ namespace NeighborHelp.Utils
 {
     internal static class StartupAuthenticationExtention
     {
-        private const string TokenIssuerPath = "Tokens:Issuer";
-        private const string TokenKeyPath = "Tokens:Key";
-        private const string AuthenticationTypePropertyName = "AuthenticationType";
-
         internal static IServiceCollection ConfigureAuthentication(this IServiceCollection services, IConfiguration authenticationConfiguration)
         {
-            var authentificationType = authenticationConfiguration.ReadAuthentificationType(AuthenticationTypePropertyName);
+            var authentificationType = authenticationConfiguration.ReadAuthentificationType();
 
             switch (authentificationType)
             {
@@ -69,8 +65,8 @@ namespace NeighborHelp.Utils
                     options.RequireHttpsMetadata = false;
                     options.SaveToken = true;
 
-                    string issuer = authenticationConfiguration[TokenIssuerPath];
-                    string token = authenticationConfiguration[TokenKeyPath];
+                    string issuer = authenticationConfiguration.GetTokenIssuer();
+                    string token = authenticationConfiguration.GetTokenKey();
                     options.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidIssuer = issuer,
