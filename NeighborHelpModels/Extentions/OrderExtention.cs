@@ -56,6 +56,54 @@ namespace NeighborHelpModels.Extentions
             }
         }
 
+        public static bool IsEquals(this Order a, Order b)
+        {
+            if (a != null && b != null)
+            {
+                bool isEqual = a.Id == b.Id
+                  && a.Product == b.Product
+                  && a.ProductDescription == b.ProductDescription
+                  && a.Status == b.Status
+                  && a.OrderType == b.OrderType
+                  && a.AuthorId == b.AuthorId
+                  && a.ClientId == b.ClientId;
+
+                if (!isEqual)
+                    return false;
+
+                isEqual = IsEquals(a.Author, b.Author);
+                return isEqual;
+            }
+            else if (a == null && b == null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private static bool IsEquals(this UserProfile a, UserProfile b)
+        {
+            if (a != null && b != null)
+            {
+                bool isEqual = a.Name == b.Name
+                    && a.Address == b.Address
+                    && a.PhoneNumber == b.PhoneNumber;
+
+                return isEqual;
+            }
+            else if (a == null && b == null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public static IEnumerable<string> GetAllTypes(this Order obj)
         {
             return new string[] 

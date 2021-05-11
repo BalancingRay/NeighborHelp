@@ -7,6 +7,7 @@ using NeighborHelp.Utils;
 using NeighborHelpModels.Models.Consts;
 using Microsoft.AspNetCore.Http;
 using NeighborHelpAPI.Consts;
+using NeighborHelpModels.Extentions;
 
 namespace NeighborHelp.Controllers
 {
@@ -134,10 +135,8 @@ namespace NeighborHelp.Controllers
             }
 
             var originalOrder = _orderDirectory.GetOrder(order.Id);
-
-            bool isOrderChanged = !IsEquals(originalOrder, order);
-
-            bool isNotValidStatus = string.Compare(originalOrder?.Status, OrderStatus.ACTIVE) != 0;
+            bool isOrderChanged = !order.IsEquals(originalOrder);
+            bool isNotValidStatus = !string.Equals(originalOrder?.Status, OrderStatus.ACTIVE, System.StringComparison.OrdinalIgnoreCase);
 
             if (isOrderChanged || isNotValidStatus)
             {
@@ -156,47 +155,6 @@ namespace NeighborHelp.Controllers
             else
             {
                 return new BadRequestResult();
-            }
-        }
-
-        //TODO update extension or add IEqutable interface
-        private bool IsEquals(Order a, Order b)
-        {
-            if (a != null && b != null)
-            {
-                bool isEqual = a.Id == b.Id
-                  && a.Product == b.Product
-                  && a.ProductDescription == b.ProductDescription
-                  && a.Status == b.Status
-                  && a.OrderType == b.OrderType;
-
-                if (!isEqual)
-                    return false;
-
-                if (a.Author != null && b.Author != null)
-                {
-                    isEqual = a.Author.Name == b.Author.Name
-                        && a.Author.Address == b.Author.Address
-                        && a.Author.PhoneNumber == b.Author.PhoneNumber;
-
-                    return isEqual;
-                }
-                else if (a.Author == null && b.Author == null)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else if (a == null && b == null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
             }
         }
     }
