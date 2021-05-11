@@ -1,22 +1,17 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NeighborHelp.Utils;
 using Microsoft.Extensions.Hosting;
-using NeighborHelp.Controllers.Consts;
-using NeighborHelp.Services;
-using NeighborHelp.Services.Contracts;
 
 namespace NeighborHelp
 {
     public class Startup
     {
-        private const string ConnectionPropertyName = "DefaultConnection";
-        private bool ClearDBOnStart = true;
-        private bool UseSQLDatabase = true;
+        private static string AuthenticationConfigurationArea = AuthenticationConfigurationExtention.ConfigurationArea;
+        private const string DataBaseConfigurationArea = "DataBase";
+
         public IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
@@ -30,53 +25,10 @@ namespace NeighborHelp
                 .AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
-                {
-                    options.LoginPath = new PathString(PathConst.LOGIN_PATH);
-                    options.AccessDeniedPath = new PathString(PathConst.LOGIN_PATH);
-                });
+            services.ConfigureAuthentication(Configuration.GetSection(AuthenticationConfigurationArea));
+            services.ConfigureDirectoryServices(Configuration.GetSection(DataBaseConfigurationArea));
+
             services.AddAuthorization();
-
-            ConfigureDirectory(services);
-        }
-
-        private IServiceCollection ConfigureDirectory(IServiceCollection services)
-        {
-            if (UseSQLDatabase)
-            {
-                string connection = Configuration.GetConnectionString(ConnectionPropertyName);
-
-                //Don't use ApplicationContext directly. Use EntityUserOrderDirectory class instead.
-                //services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection));
-
-                var options = new DbContextOptionsBuilder<ApplicationContext>()
-                        .UseSqlServer(connection)
-                        .Options;
-
-                services.AddScoped(typeof(IOrderDirectoryServise), 
-                    (servProvider)=> 
-                    new EntityUserOrderDirectory(new ApplicationContext(options)));
-                services.AddScoped(typeof(IUserDirectoryServise), 
-                    (servProvider) => 
-                    new EntityUserOrderDirectory(new ApplicationContext(options)));
-
-                //Fill start data
-                ApplicationContext applicationContext = new ApplicationContext(options, ClearDBOnStart);
-                var directoryService = new EntityUserOrderDirectory(applicationContext);
-                var testData = new TestDataFiller(directoryService, directoryService);
-                testData.FillIfEmpty();         
-            }
-            else
-            {
-                //Use implementation in RAM
-                var directoryService = new MemoryUserOrderDirectory();
-
-                services.AddSingleton(typeof(IOrderDirectoryServise), directoryService);
-                services.AddSingleton(typeof(IUserDirectoryServise), directoryService);
-            }
-
-            return services;
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -88,8 +40,8 @@ namespace NeighborHelp
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
-
             app.UseHttpsRedirection();
+
             app.UseRouting();
 
             app.UseAuthentication();

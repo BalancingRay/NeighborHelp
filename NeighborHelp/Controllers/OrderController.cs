@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NeighborHelp.Controllers.Consts;
 using NeighborHelpModels.Models;
 using NeighborHelp.Services.Contracts;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
+using NeighborHelp.Utils;
+using NeighborHelpModels.Models.Consts;
+using Microsoft.AspNetCore.Http;
+using NeighborHelpAPI.Consts;
+using NeighborHelpModels.Extentions;
 
 namespace NeighborHelp.Controllers
 {
@@ -29,7 +31,7 @@ namespace NeighborHelp.Controllers
         }
 
         [HttpGet("{userId}")]
-        [Authorize]
+        //[Authorize]
         [ActionName(OrderControllerConsts.GET_BY_USER_ACTION)]
         public ActionResult<IEnumerable<Order>> GetByUser(int userId)
         {
@@ -63,6 +65,17 @@ namespace NeighborHelp.Controllers
                 return new NoContentResult();
             }
 
+            int originalAuthorId = _orderDirectory.GetOrder(order.Id)?.AuthorId ?? 0;
+
+            bool isNotCurrentUser = AuthorizationHelper.TryGetCurrentUserId(HttpContext?.User, out int id)
+                && id != originalAuthorId;
+            bool isNotAdmin = AuthorizationHelper.GetCurrentUserRole(HttpContext?.User) != UserRoles.ADMIN;
+
+            if (isNotCurrentUser && isNotAdmin)
+            {
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+            }
+
             bool succeed = _orderDirectory.TryPutOrder(order);
 
             if (succeed)
@@ -85,14 +98,55 @@ namespace NeighborHelp.Controllers
                 return new NoContentResult();
             }
 
-            string claimId = HttpContext?.User?.Claims?.FirstOrDefault(cl => cl.Type == ClaimsIdentity.DefaultNameClaimType)?.Value;
             bool succeed = false;
 
-            if (int.TryParse(claimId, out int id))
+            if (AuthorizationHelper.TryGetCurrentUserId(HttpContext?.User, out int id))
             {
                 order.AuthorId = id;
                 succeed = _orderDirectory.TryAddOrder(order);
             }
+
+            if (succeed)
+            {
+                return new ActionResult<Order>(order);
+            }
+            else
+            {
+                return new BadRequestResult();
+            }
+        }
+
+
+        [Authorize]
+        [HttpPut]
+        [ActionName(OrderControllerConsts.RESPONSE_ACTION)]
+        public ActionResult<Order> Responce(Order order)
+        {
+            if (order == null)
+            {
+                return new NoContentResult();
+            }
+
+            bool hasAutorId = AuthorizationHelper.TryGetCurrentUserId(HttpContext?.User, out int authorId);
+
+            if (!hasAutorId)
+            {
+                return new StatusCodeResult(StatusCodes.Status401Unauthorized);
+            }
+
+            var originalOrder = _orderDirectory.GetOrder(order.Id);
+            bool isOrderChanged = !order.IsEquals(originalOrder);
+            bool isNotValidStatus = !string.Equals(originalOrder?.Status, OrderStatus.ACTIVE, System.StringComparison.OrdinalIgnoreCase);
+
+            if (isOrderChanged || isNotValidStatus)
+            {
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+            }
+
+            order.ClientId = authorId;
+            order.Status = OrderStatus.RESPONSED;
+
+            bool succeed = _orderDirectory.TryPutOrder(order);
 
             if (succeed)
             {

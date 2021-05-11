@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NeighborHelp.Controllers.Consts;
 using NeighborHelpModels.Models;
 using NeighborHelpModels.Models.Consts;
 using NeighborHelp.Services.Contracts;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using NeighborHelp.Utils;
+using NeighborHelpAPI.Consts;
 
 namespace NeighborHelp.Controllers
 {
@@ -16,7 +16,7 @@ namespace NeighborHelp.Controllers
     {
         private IUserDirectoryServise _userDirectory;
 
-        public UserController(IUserDirectoryServise service) 
+        public UserController(IUserDirectoryServise service)
         {
             _userDirectory = service;
         }
@@ -26,10 +26,8 @@ namespace NeighborHelp.Controllers
          ActionName(UserControllerConsts.GET_CURRENT_ACTION)]
         public ActionResult<User> Current()
         {
-            string claimId = HttpContext?.User?.Claims?.FirstOrDefault(cl => cl.Type == ClaimsIdentity.DefaultNameClaimType)?.Value;
             User user = null;
-
-            if (int.TryParse(claimId, out int id))
+            if (AuthorizationHelper.TryGetCurrentUserId(HttpContext?.User, out int id))
             {
                 user = _userDirectory.GetUser(id);
             }
@@ -45,7 +43,7 @@ namespace NeighborHelp.Controllers
         }
 
         [HttpGet("{id}"),
-         Authorize(Roles =UserRoles.ADMIN),
+         Authorize(Roles = UserRoles.ADMIN),
          ActionName(UserControllerConsts.GET_ACTION)]
         public ActionResult<User> Get(int id)
         {
@@ -87,6 +85,15 @@ namespace NeighborHelp.Controllers
             if (user == null)
             {
                 return new NoContentResult();
+            }
+
+            bool isNotCurrentUser = AuthorizationHelper.TryGetCurrentUserId(HttpContext?.User, out int id) 
+                && id != user.Id;
+            bool isNotAdmin = AuthorizationHelper.GetCurrentUserRole(HttpContext?.User) != UserRoles.ADMIN;
+
+            if (isNotCurrentUser && isNotAdmin)
+            {
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
             }
 
             bool succeed = _userDirectory.TryPutUser(user);

@@ -1,8 +1,7 @@
-﻿namespace NeighborHelp.Controllers.Consts
+﻿namespace NeighborHelpAPI.Consts
 {
     public static class UserControllerConsts
     {
-        public const string SIGNIN = "SIGNIN";
         public const string ADD_USER = "REGISTER";
         public const string GET_ACTION = "GET";
         public const string GET_CURRENT_ACTION = "CURRENT";

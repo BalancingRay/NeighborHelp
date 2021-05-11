@@ -4,7 +4,7 @@ using NeighborHelpModels.Models.Consts;
 using NeighborHelp.Services.Contracts;
 using System.Collections.Generic;
 using System.Linq;
-using NeighborHelpModels.Utils;
+using NeighborHelpModels.Extentions;
 
 namespace NeighborHelp.Services
 {
@@ -48,7 +48,7 @@ namespace NeighborHelp.Services
         {
             if (useTraching)
             {
-                return Users.SingleOrDefault(u => u.Id == id);
+                return Users.Include(u => u.Profile).SingleOrDefault(u => u.Id == id);
             }
             else
             {
@@ -160,7 +160,7 @@ namespace NeighborHelp.Services
         {
             if (useTracking)
             {
-                return Orders.SingleOrDefault(cl => cl.Id == id);
+                return Orders.Include(o => o.Author).SingleOrDefault(cl => cl.Id == id);
             }
             else
             {
