@@ -16,9 +16,19 @@ namespace NeighborHelp.Utils
 {
     internal static class StartupAuthenticationExtention
     {
+        //Exception happents if following multuScheme add to Controllers:
+        public static readonly string MultipleaAthSchemes =
+        CookieAuthenticationDefaults.AuthenticationScheme + "," + JwtBearerDefaults.AuthenticationScheme;
+
+        //TODO First solution : add mocking of cookies or jwt scheme if it not in parameters but requared by controller Attribute
+        //TODO Second solution: add custom Authentication handler to skip exception if current parameter not supporting scheme
+
         internal static IServiceCollection ConfigureAuthentication(this IServiceCollection services, IConfiguration authenticationConfiguration)
         {
-            var authentificationType = authenticationConfiguration.ReadAuthentificationType();
+            //var authentificationType = authenticationConfiguration.ReadAuthentificationType();
+            var authentificationType = AuthenticationConfigurationExtention.ParseAuthenticationType(Properties.AuthenticationPropForAttributes.CurrentSetting);
+            //Temp solution. Ignor AppSettings and use constant from authenticationPropForAttributes
+            //to generate value for AuthorizeAttribute.AuthenticationSchemes for controller action
 
             switch (authentificationType)
             {
@@ -28,14 +38,15 @@ namespace NeighborHelp.Utils
 
                 case AuthentificationType.COOKIES:
                     services.AddCookiesAuthentication();
+                    //services.AddAuthentication().AddScheme<object, object>("bearer", opt => opt.ToString());
                     break;
 
                 case AuthentificationType.JWT:
                     services.AddJWTAuthentication(authenticationConfiguration);
                     break;
                 case AuthentificationType.COOKIES_AND_JWT:
-                    services.AddCookiesAuthentication();
                     services.AddJWTAuthentication(authenticationConfiguration);
+                    services.AddCookiesAuthentication();
                     break;
             }
             return services;

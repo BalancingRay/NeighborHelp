@@ -8,6 +8,7 @@ using NeighborHelpModels.Models.Consts;
 using Microsoft.AspNetCore.Http;
 using NeighborHelpAPI.Consts;
 using NeighborHelpModels.Extentions;
+using NeighborHelp.Properties;
 
 namespace NeighborHelp.Controllers
 {
@@ -31,7 +32,6 @@ namespace NeighborHelp.Controllers
         }
 
         [HttpGet("{userId}")]
-        //[Authorize]
         [ActionName(OrderControllerConsts.GET_BY_USER_ACTION)]
         public ActionResult<IEnumerable<Order>> GetByUser(int userId)
         {
@@ -55,7 +55,7 @@ namespace NeighborHelp.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = AuthenticationPropForAttributes.Value)]
         [HttpPut]
         [ActionName(OrderControllerConsts.PUT_ACTION)]
         public ActionResult<Order> Put(Order order)
@@ -88,7 +88,7 @@ namespace NeighborHelp.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = AuthenticationPropForAttributes.Value)]
         [HttpPost]
         [ActionName(OrderControllerConsts.ADD_ACTION)]
         public ActionResult<Order> Post(Order order)
@@ -117,7 +117,7 @@ namespace NeighborHelp.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = AuthenticationPropForAttributes.Value)]
         [HttpPut]
         [ActionName(OrderControllerConsts.RESPONSE_ACTION)]
         public ActionResult<Order> Responce(Order order)

@@ -15,22 +15,24 @@ namespace NeighborHelp.Utils
         private static readonly string TokenKeyPath = $"{TokenSection}:Key";
         private static readonly string TokenExpiresMinutesPath = $"{TokenSection}:ExpiresMinumes";
 
-
-
         public static AuthentificationType ReadAuthentificationType(this IConfiguration configuration)
         {
             string textValue = configuration.UseAuthenticationSection()[AuthenticationTypePropertyName];
 
+            return ParseAuthenticationType(textValue);
+        }
+
+        public static AuthentificationType ParseAuthenticationType(string value)
+        {
             var data = Enum.GetValues<AuthentificationType>();
 
             foreach (var item in data)
             {
-                if (item.ToString().Equals(textValue, StringComparison.OrdinalIgnoreCase))
+                if (item.ToString().Equals(value, StringComparison.OrdinalIgnoreCase))
                 {
                     return item;
                 }
             }
-
             return AuthentificationType.NONE;
         }
 
