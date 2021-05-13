@@ -11,14 +11,25 @@ using NeighborHelp.Properties.Enums;
 using NeighborHelp.Services;
 using NeighborHelpAPI.Consts;
 using System.Text;
+using NeighborHelpInfrastucture.Utils;
 
 namespace NeighborHelp.Utils
 {
     internal static class StartupAuthenticationExtention
     {
+        //Exception happents if following multuScheme add to Controllers:
+        public static readonly string MultipleaAthSchemes =
+        CookieAuthenticationDefaults.AuthenticationScheme + "," + JwtBearerDefaults.AuthenticationScheme;
+
+        //TODO First solution : add mocking of cookies or jwt scheme if it not in parameters but requared by controller Attribute
+        //TODO Second solution: add custom Authentication handler to skip exception if current parameter not supporting scheme
+
         internal static IServiceCollection ConfigureAuthentication(this IServiceCollection services, IConfiguration authenticationConfiguration)
         {
-            var authentificationType = authenticationConfiguration.ReadAuthentificationType();
+            //var authentificationType = authenticationConfiguration.ReadAuthentificationType();
+            var authentificationType = AuthenticationConfigurationExtention.ParseAuthenticationType(AuthorizeAttributeHelper.CurrentSetting);
+            //Temp solution. Ignor AppSettings and use constant from AuthorizeAttributeHelper
+            //to generate value for AuthorizeAttribute.AuthenticationSchemes for controllers actions
 
             switch (authentificationType)
             {
@@ -34,8 +45,8 @@ namespace NeighborHelp.Utils
                     services.AddJWTAuthentication(authenticationConfiguration);
                     break;
                 case AuthentificationType.COOKIES_AND_JWT:
-                    services.AddCookiesAuthentication();
                     services.AddJWTAuthentication(authenticationConfiguration);
+                    services.AddCookiesAuthentication();
                     break;
             }
             return services;

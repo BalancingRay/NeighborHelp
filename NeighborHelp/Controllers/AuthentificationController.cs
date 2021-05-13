@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using NeighborHelpModels.Models;
-using NeighborHelp.Services.Contracts;
+using NeighborHelpInfrastructure.ServiceContracts;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +13,7 @@ using System.Text;
 using System;
 using Microsoft.AspNetCore.Http;
 using NeighborHelp.Utils;
+using NeighborHelpInfrastucture.Utils;
 using NeighborHelpModels.ControllersModel;
 using NeighborHelpAPI.Consts;
 

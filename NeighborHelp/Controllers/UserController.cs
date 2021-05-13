@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using NeighborHelpModels.Models;
 using NeighborHelpModels.Models.Consts;
-using NeighborHelp.Services.Contracts;
+using NeighborHelpInfrastructure.ServiceContracts;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
-using NeighborHelp.Utils;
 using NeighborHelpAPI.Consts;
+using NeighborHelpInfrastucture.Utils;
 
 namespace NeighborHelp.Controllers
 {
@@ -22,8 +22,8 @@ namespace NeighborHelp.Controllers
         }
 
         [HttpGet,
-         Authorize,
          ActionName(UserControllerConsts.GET_CURRENT_ACTION)]
+        [Authorize(AuthenticationSchemes = AuthorizeAttributeHelper.Value)]
         public ActionResult<User> Current()
         {
             User user = null;
@@ -45,6 +45,7 @@ namespace NeighborHelp.Controllers
         [HttpGet("{id}"),
          Authorize(Roles = UserRoles.ADMIN),
          ActionName(UserControllerConsts.GET_ACTION)]
+        [Authorize(AuthenticationSchemes = AuthorizeAttributeHelper.Value)]
         public ActionResult<User> Get(int id)
         {
             var user = _userDirectory.GetUser(id);
@@ -62,7 +63,7 @@ namespace NeighborHelp.Controllers
         [HttpGet,
          Authorize(Roles = UserRoles.ADMIN),
          ActionName(UserControllerConsts.GET_ALL_ACTION)]
-
+        [Authorize(AuthenticationSchemes = AuthorizeAttributeHelper.Value)]
         public ActionResult<IEnumerable<User>> GetAll()
         {
             var users = _userDirectory.GetUsers();
@@ -77,7 +78,7 @@ namespace NeighborHelp.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = AuthorizeAttributeHelper.Value)]
         [ActionName(UserControllerConsts.UPDATE_ACTION)]
         [HttpPut]
         public ActionResult<User> Put(User user)

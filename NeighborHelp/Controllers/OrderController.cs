@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NeighborHelpModels.Models;
-using NeighborHelp.Services.Contracts;
+using NeighborHelpInfrastructure.ServiceContracts;
 using System.Collections.Generic;
-using NeighborHelp.Utils;
 using NeighborHelpModels.Models.Consts;
 using Microsoft.AspNetCore.Http;
 using NeighborHelpAPI.Consts;
 using NeighborHelpModels.Extentions;
+using NeighborHelpInfrastucture.Utils;
 
 namespace NeighborHelp.Controllers
 {
@@ -31,7 +31,6 @@ namespace NeighborHelp.Controllers
         }
 
         [HttpGet("{userId}")]
-        //[Authorize]
         [ActionName(OrderControllerConsts.GET_BY_USER_ACTION)]
         public ActionResult<IEnumerable<Order>> GetByUser(int userId)
         {
@@ -55,7 +54,7 @@ namespace NeighborHelp.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = AuthorizeAttributeHelper.Value)]
         [HttpPut]
         [ActionName(OrderControllerConsts.PUT_ACTION)]
         public ActionResult<Order> Put(Order order)
@@ -88,7 +87,7 @@ namespace NeighborHelp.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = AuthorizeAttributeHelper.Value)]
         [HttpPost]
         [ActionName(OrderControllerConsts.ADD_ACTION)]
         public ActionResult<Order> Post(Order order)
@@ -117,7 +116,7 @@ namespace NeighborHelp.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = AuthorizeAttributeHelper.Value)]
         [HttpPut]
         [ActionName(OrderControllerConsts.RESPONSE_ACTION)]
         public ActionResult<Order> Responce(Order order)

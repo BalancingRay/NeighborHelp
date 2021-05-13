@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NeighborHelp.Utils;
 using Microsoft.Extensions.Hosting;
+using NeighborHelp.Utils;
+using NeighborHelpAPI.Consts;
+using NeighborHelpChat.Hubs;
 
 namespace NeighborHelp
 {
@@ -28,7 +30,11 @@ namespace NeighborHelp
             services.ConfigureAuthentication(Configuration.GetSection(AuthenticationConfigurationArea));
             services.ConfigureDirectoryServices(Configuration.GetSection(DataBaseConfigurationArea));
 
-            services.AddAuthorization();
+            services.AddSignalR(hubOptions =>
+            {
+                hubOptions.EnableDetailedErrors = true;
+                hubOptions.KeepAliveInterval = System.TimeSpan.FromMinutes(1);
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -50,6 +56,7 @@ namespace NeighborHelp
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>(ChatHubConsts.Path);
             });
         }
     }

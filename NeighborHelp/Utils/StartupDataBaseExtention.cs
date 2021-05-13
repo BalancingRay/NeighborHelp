@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NeighborHelp.Services;
-using NeighborHelp.Services.Contracts;
+using NeighborHelpInfrastructure.ServiceContracts;
 
 namespace NeighborHelp.Utils
 {

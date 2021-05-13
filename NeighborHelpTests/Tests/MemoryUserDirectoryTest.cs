@@ -1,5 +1,5 @@
 ﻿using NeighborHelp.Services;
-using NeighborHelp.Services.Contracts;
+using NeighborHelpInfrastructure.ServiceContracts;
 using NUnit.Framework;
 
 namespace NeighborHelpTests.Tests
