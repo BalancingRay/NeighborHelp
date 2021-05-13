@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using NeighborHelpModels.Models;
 using NeighborHelpInfrastructure.ServiceContracts;
 using System.Collections.Generic;
-using NeighborHelp.Utils;
 using NeighborHelpModels.Models.Consts;
 using Microsoft.AspNetCore.Http;
 using NeighborHelpAPI.Consts;

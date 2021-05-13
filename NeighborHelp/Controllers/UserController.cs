@@ -5,7 +5,6 @@ using NeighborHelpModels.Models.Consts;
 using NeighborHelpInfrastructure.ServiceContracts;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
-using NeighborHelp.Utils;
 using NeighborHelpAPI.Consts;
 using NeighborHelpInfrastucture.Utils;
 

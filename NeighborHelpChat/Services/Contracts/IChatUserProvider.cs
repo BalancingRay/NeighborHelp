@@ -1,7 +1,9 @@
-﻿namespace NeighborHelpChat.Services.Contracts
+﻿using Microsoft.AspNetCore.SignalR;
+
+namespace NeighborHelpChat.Services.Contracts
 {
     public interface IChatUserProvider
     {
-        string GetCurrentUserName();
+        string GetCurrentUserName(HubCallerContext context);
     }
 }

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
-namespace NeighborHelp.Utils
+namespace NeighborHelpInfrastucture.Utils
 {
     public static class AuthorizationHelper
     {
-        internal static IEnumerable<Claim> GenerateUserClaims(User user)
+        public static IEnumerable<Claim> GenerateUserClaims(User user)
         {
             var claims = new List<Claim>
             {
@@ -18,7 +18,7 @@ namespace NeighborHelp.Utils
             return claims;
         }
 
-        internal static bool TryGetCurrentUserId(ClaimsPrincipal user, out int userId)
+        public static bool TryGetCurrentUserId(ClaimsPrincipal user, out int userId)
         {
             string claimId = user?.Claims?.FirstOrDefault(cl => cl.Type == ClaimsIdentity.DefaultNameClaimType)?.Value;
 
@@ -34,10 +34,10 @@ namespace NeighborHelp.Utils
             }
         }
 
-        internal static string GetCurrentUserRole(ClaimsPrincipal user)
+        public static string GetCurrentUserRole(ClaimsPrincipal user)
         {
             string role = user?.Claims?.FirstOrDefault(cl => cl.Type == ClaimsIdentity.DefaultRoleClaimType)?.Value;
-            return role;
+            return role ?? string.Empty;
         }
     }
 }
