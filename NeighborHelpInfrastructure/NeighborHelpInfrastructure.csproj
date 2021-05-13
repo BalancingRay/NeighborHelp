@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Description>Common utils and serviceContracts for NeighborHelp server</Description>
+    <Product>NeighborHelpInfrastructure</Product>
+    <Version>1.0.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,12 +14,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.5" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="ServiceContracts\" />
-    <Folder Include="Utils\" />
-  </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\NeighborHelpModels\NeighborHelpModels.csproj" />
   </ItemGroup>
