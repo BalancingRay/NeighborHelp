@@ -14,14 +14,12 @@ namespace NeighborHelpChat.Hubs
     [Authorize(AuthenticationSchemes = AuthorizeAttributeHelper.Value)]
     public class ChatHub : Hub
     {
-        private IChatChannelsProvider channels;
         private IChatUserProvider users;
 
         public string CurrentUserName => users.GetCurrentUserName(Context);
 
         public ChatHub(IUserDirectoryServise userService)
         {
-            channels = new InMemoryChannelProvider(Groups);
             users = new ChatUserProvider(userService);
         }
 
@@ -33,7 +31,7 @@ namespace NeighborHelpChat.Hubs
                 string username = CurrentUserName;
 
                 await Groups.AddToGroupAsync(Context.ConnectionId, groupname);
-                await Clients.Group(groupname).SendAsync(ChatHubConsts.NotifyClients, $"{username} вошел в чат");
+                await Clients.Group(groupname).SendAsync(ChatHubConsts.NotifyClients, $"{username} joined to the group chat");
             }
         }
 
@@ -52,12 +50,12 @@ namespace NeighborHelpChat.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            await Clients.All.SendAsync("Notify", $"{CurrentUserName} вошел в чат");
+            await Clients.All.SendAsync("Notify", $"{CurrentUserName} joined to the chat");
             await base.OnConnectedAsync();
         }
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            await Clients.All.SendAsync("Notify", $"{CurrentUserName} покинул в чат");
+            await Clients.All.SendAsync("Notify", $"{CurrentUserName} left the chat");
             await base.OnDisconnectedAsync(exception);
         }
     }
