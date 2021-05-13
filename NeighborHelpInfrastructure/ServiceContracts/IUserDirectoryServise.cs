@@ -1,7 +1,7 @@
 ﻿using NeighborHelpModels.Models;
 using System.Collections.Generic;
 
-namespace NeighborHelp.Services.Contracts
+namespace NeighborHelpInfrastructure.ServiceContracts
 {
     public interface IUserDirectoryServise
     {

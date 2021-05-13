@@ -1,6 +1,6 @@
 using NeighborHelpModels.Models;
 using NeighborHelpModels.Models.Consts;
-using NeighborHelp.Services.Contracts;
+using NeighborHelpInfrastructure.ServiceContracts;
 using NUnit.Framework;
 using System.Linq;
 

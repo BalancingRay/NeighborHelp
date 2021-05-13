@@ -3,17 +3,15 @@ using Microsoft.AspNetCore.SignalR;
 using NeighborHelpAPI.Consts;
 using NeighborHelpChat.Services;
 using NeighborHelpChat.Services.Contracts;
-using NeighborHelpModels.Models.Consts;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
+using NeighborHelpInfrastucture.Utils;
 
 namespace NeighborHelpChat.Hubs
 {
-    [Authorize(AuthenticationSchemes = "Cookies, Bearer")]
+    [Authorize(AuthenticationSchemes = AuthorizeAttributeHelper.Value)]
     public class ChatHub : Hub
     {
         private IChatChannelsProvider channels;

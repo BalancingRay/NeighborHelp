@@ -1,6 +1,6 @@
 ﻿using NeighborHelpModels.Models;
 using NeighborHelp.Services;
-using NeighborHelp.Services.Contracts;
+using NeighborHelpInfrastructure.ServiceContracts;
 using NeighborHelpTests.Infrostructure;
 using NUnit.Framework;
 using System.Linq;

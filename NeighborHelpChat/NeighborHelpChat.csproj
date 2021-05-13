@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NeighborHelpAPI\NeighborHelpAPI.csproj" />
+    <ProjectReference Include="..\NeighborHelpInfrastructure\NeighborHelpInfrastructure.csproj" />
     <ProjectReference Include="..\NeighborHelpModels\NeighborHelpModels.csproj" />
   </ItemGroup>
 

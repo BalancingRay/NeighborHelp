@@ -5,8 +5,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.5" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <Folder Include="ServiceContracts\" />
     <Folder Include="Utils\" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\NeighborHelpModels\NeighborHelpModels.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace NeighborHelp.Services.Contracts
+﻿namespace NeighborHelpInfrastructure.ServiceContracts
 {
     internal static class ContractConsts
     {

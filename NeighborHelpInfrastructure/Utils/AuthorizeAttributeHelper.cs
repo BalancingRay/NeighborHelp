@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
-namespace NeighborHelp.Properties
+namespace NeighborHelpInfrastucture.Utils
 {
-    public static class AuthenticationPropForAttributes
+    public static class AuthorizeAttributeHelper
     {
         private const string Cookies_and_JWT = "COOKIES_AND_JWT";
         private const string Cookies = "COOKIES";

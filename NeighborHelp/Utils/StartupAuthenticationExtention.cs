@@ -11,6 +11,7 @@ using NeighborHelp.Properties.Enums;
 using NeighborHelp.Services;
 using NeighborHelpAPI.Consts;
 using System.Text;
+using NeighborHelpInfrastucture.Utils;
 
 namespace NeighborHelp.Utils
 {
@@ -26,9 +27,9 @@ namespace NeighborHelp.Utils
         internal static IServiceCollection ConfigureAuthentication(this IServiceCollection services, IConfiguration authenticationConfiguration)
         {
             //var authentificationType = authenticationConfiguration.ReadAuthentificationType();
-            var authentificationType = AuthenticationConfigurationExtention.ParseAuthenticationType(Properties.AuthenticationPropForAttributes.CurrentSetting);
-            //Temp solution. Ignor AppSettings and use constant from authenticationPropForAttributes
-            //to generate value for AuthorizeAttribute.AuthenticationSchemes for controller action
+            var authentificationType = AuthenticationConfigurationExtention.ParseAuthenticationType(AuthorizeAttributeHelper.CurrentSetting);
+            //Temp solution. Ignor AppSettings and use constant from AuthorizeAttributeHelper
+            //to generate value for AuthorizeAttribute.AuthenticationSchemes for controllers actions
 
             switch (authentificationType)
             {
@@ -38,7 +39,6 @@ namespace NeighborHelp.Utils
 
                 case AuthentificationType.COOKIES:
                     services.AddCookiesAuthentication();
-                    //services.AddAuthentication().AddScheme<object, object>("bearer", opt => opt.ToString());
                     break;
 
                 case AuthentificationType.JWT:
