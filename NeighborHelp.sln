@@ -11,7 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeighborHelpModels", "Neigh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeighborHelpAPI", "NeighborHelpAPI\NeighborHelpAPI.csproj", "{16EEA3A3-0B28-4FB2-9C3D-5C4FE5460F15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeighborHelpChat", "NeighborHelpChat\NeighborHelpChat.csproj", "{5D60894A-D901-4BBB-9706-8E36BF6EA255}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeighborHelpChat", "NeighborHelpChat\NeighborHelpChat.csproj", "{5D60894A-D901-4BBB-9706-8E36BF6EA255}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PublicAssemblies", "PublicAssemblies", "{B3F8BCFF-92FB-4C3D-B78B-C85F5D76ED3F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InternalInfrastructureAssemblies", "InternalInfrastructureAssemblies", "{2FA825A2-A679-4CCF-A7D9-46AE483C52FF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeighborHelpInfrastructure", "NeighborHelpInfrastructure\NeighborHelpInfrastructure.csproj", "{CDBC8983-E3F8-4F8C-B84F-392E674287FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,9 +45,18 @@ Global
 		{5D60894A-D901-4BBB-9706-8E36BF6EA255}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D60894A-D901-4BBB-9706-8E36BF6EA255}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D60894A-D901-4BBB-9706-8E36BF6EA255}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDBC8983-E3F8-4F8C-B84F-392E674287FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDBC8983-E3F8-4F8C-B84F-392E674287FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDBC8983-E3F8-4F8C-B84F-392E674287FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDBC8983-E3F8-4F8C-B84F-392E674287FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0098AF75-60DC-4BFF-A059-AAE418BB2F18} = {B3F8BCFF-92FB-4C3D-B78B-C85F5D76ED3F}
+		{16EEA3A3-0B28-4FB2-9C3D-5C4FE5460F15} = {B3F8BCFF-92FB-4C3D-B78B-C85F5D76ED3F}
+		{CDBC8983-E3F8-4F8C-B84F-392E674287FC} = {2FA825A2-A679-4CCF-A7D9-46AE483C52FF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F236CE0E-A9E5-49A6-8683-9DD0A604E241}
