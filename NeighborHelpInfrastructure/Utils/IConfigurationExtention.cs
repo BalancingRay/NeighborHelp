@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
-using NeighborHelp.Properties.Enums;
 using System;
 
-namespace NeighborHelp.Utils
+namespace NeighborHelpInfrastucture.Utils
 {
     public static class IConfigurationExtention
     {

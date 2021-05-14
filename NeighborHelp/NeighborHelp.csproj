@@ -16,6 +16,7 @@
     <ProjectReference Include="..\NeighborHelpChat\NeighborHelpChat.csproj" />
     <ProjectReference Include="..\NeighborHelpInfrastructure\NeighborHelpInfrastructure.csproj" />
     <ProjectReference Include="..\NeighborHelpModels\NeighborHelpModels.csproj" />
+    <ProjectReference Include="..\NeighborHelpWebClient\NeighborHelpWebClient.csproj" />
   </ItemGroup>
 
 </Project>
