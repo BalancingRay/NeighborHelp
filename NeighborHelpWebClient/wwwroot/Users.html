@@ -7,9 +7,12 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
+    <a id="login" class="btn btn-primary" href="Login.html">Login</a>
     <h2>List of Users</h2>
     <form name="userForm">
-        <input type="hidden" name="id" value="0" />
+        <div class="panel-body">
+            <input type="hidden" name="id" value="0" />
+        </div>
         <div class="form-group col-md-5">
             <label for="Login">Login:</label>
             <input class="form-control" name="Login" />
@@ -22,6 +25,10 @@
             <label for="Role">Role:</label>
             <input class="form-control" name="Role" type="text" />
         </div>
+        <div class="form-group col-md-5">
+            <label for="Password">Password:</label>
+            <input class="form-control" name="Password" type="password" id="passwordFeild" />
+        </div>
         <div class="panel-body">
             <button type="submit" id="submit" class="btn btn-primary">Save</button>
             <a id="reset" class="btn btn-primary">Reset</a>
@@ -33,25 +40,21 @@
         </tbody>
     </table>
     <script>
-        // Получение всех пользователей
+        // GetAll
         async function GetUsers() {
-            // отправляет запрос и получаем ответ
             const response = await fetch("/api/user/ALL", {
                 method: "GET",
                 headers: { "Accept": "application/json" }
             });
-            // если запрос прошел нормально
             if (response.ok === true) {
-                // получаем данные
                 const users = await response.json();
                 let rows = document.querySelector("tbody");
                 users.forEach(user => {
-                    // добавляем полученные элементы в таблицу
                     rows.append(row(user));
                 });
             }
         }
-        // Получение одного пользователя
+        // Get
         async function GetUser(id) {
             const response = await fetch("/api/user/Get/" + id, {
                 method: "GET",
@@ -60,22 +63,24 @@
             if (response.ok === true) {
                 const user = await response.json();
                 const form = document.forms["userForm"];
-                form.elements["Id"].value = user.id;
-                form.elements["Login"].value = user.Login;
-                form.elements["UserName"].value = user.UserName;
-                form.elements["Role"].value = user.Role;
+                form.elements["id"].value = user.id;
+                form.elements["Login"].value = user.login;
+                form.elements["UserName"].value = user.userName;
+                form.elements["Role"].value = user.role;
+                form.elements["Password"].value = "";
+                form.elements["Password"].type = "hidden";
             }
         }
-        // Добавление пользователя
-        async function CreateUser(Login, UserName, Role) {
-
-            const response = await fetch("api/users/Register", {
+        // Add
+        async function CreateUser(Login, UserName, Role, Password) {
+            const response = await fetch("api/user/Register", {
                 method: "POST",
                 headers: { "Accept": "application/json", "Content-Type": "application/json" },
                 body: JSON.stringify({
                     Login: Login,
                     UserName: UserName,
-                    Role: Role
+                    Role: Role,
+                    Password: Password
                 })
             });
             if (response.ok === true) {
@@ -84,13 +89,13 @@
                 document.querySelector("tbody").append(row(user));
             }
         }
-        // Изменение пользователя
-        async function EditUser(Id, Login, UserName, Role)
-            const response = await fetch("api/users", {
+        // Edit
+        async function EditUser(Id, Login, UserName, Role) {
+            const response = await fetch("api/user/UPDATE", {
                 method: "PUT",
                 headers: { "Accept": "application/json", "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    id: parseInt(userId, 10),
+                    id: parseInt(Id, 10),
                     Login: Login,
                     UserName: UserName,
                     Role: Role
@@ -102,7 +107,7 @@
                 document.querySelector("tr[data-rowid='" + user.id + "']").replaceWith(row(user));
             }
         }
-        // Удаление пользователя
+        // Remove
         async function DeleteUser(id) {
             const response = await fetch("/api/users/" + id, {
                 method: "DELETE",
@@ -114,13 +119,14 @@
             }
         }
 
-        // сброс формы
+        // Reset Form
         function reset() {
             const form = document.forms["userForm"];
             form.reset();
             form.elements["id"].value = 0;
+            form.elements["Password"].type = "password";
         }
-        // создание строки для таблицы
+        // Create row on the table
         function row(user) {
 
             const tr = document.createElement("tr");
@@ -131,15 +137,15 @@
             tr.append(idTd);
 
             const LoginTd = document.createElement("td");
-            LoginTd.append(user.Login);
+            LoginTd.append(user.login);
             tr.append(LoginTd);
 
             const nameTd = document.createElement("td");
-            nameTd.append(user.UserName);
+            nameTd.append(user.userName);
             tr.append(nameTd);
 
             const roleTd = document.createElement("td");
-            roleTd.append(user.Role);
+            roleTd.append(user.role);
             tr.append(roleTd);
 
             const linksTd = document.createElement("td");
@@ -147,7 +153,7 @@
             const editLink = document.createElement("a");
             editLink.setAttribute("data-id", user.id);
             editLink.setAttribute("style", "cursor:pointer;padding:15px;");
-            editLink.append("Изменить");
+            editLink.append("Edit");
             editLink.addEventListener("click", e => {
 
                 e.preventDefault();
@@ -155,29 +161,29 @@
             });
             linksTd.append(editLink);
 
-            const removeLink = document.createElement("a");
-            removeLink.setAttribute("data-id", user.id);
-            removeLink.setAttribute("style", "cursor:pointer;padding:15px;");
-            removeLink.append("Удалить");
-            removeLink.addEventListener("click", e => {
+            //const removeLink = document.createElement("a");
+            //removeLink.setAttribute("data-id", user.id);
+            //removeLink.setAttribute("style", "cursor:pointer;padding:15px;");
+            //removeLink.append("Remove");
+            //removeLink.addEventListener("click", e => {
 
-                e.preventDefault();
-                DeleteUser(user.id);
-            });
+            //    e.preventDefault();
+            //    DeleteUser(user.id);
+            //});
 
-            linksTd.append(removeLink);
+            //linksTd.append(removeLink);
             tr.appendChild(linksTd);
 
             return tr;
         }
-        // сброс значений формы
+
+        // onResetForm
         document.getElementById("reset").click(function (e) {
 
             e.preventDefault();
             reset();
         })
-
-        // отправка формы
+        // onSendForm
         document.forms["userForm"].addEventListener("submit", e => {
             e.preventDefault();
             const form = document.forms["userForm"];
@@ -185,13 +191,13 @@
             const Login = form.elements["Login"].value;
             const UserName = form.elements["UserName"].value;
             const Role = form.elements["Role"].value;
+            const Password = form.elements["Password"].value;
             if (id == 0)
-                CreateUser(name, age);
+                CreateUser(Login, UserName, Role, Password);
             else
-                EditUser(id, name, age);
+                EditUser(id, Login, UserName, Role);
         });
-
-        // загрузка пользователей
+        // load users
         GetUsers();
 
     </script>
