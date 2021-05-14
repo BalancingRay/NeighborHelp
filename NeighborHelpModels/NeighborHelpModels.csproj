@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Models for NeighborHelp project</Description>
+    <Product>NeighborHelpModels</Product>
+    <Version>1.0.1.3</Version>
+  </PropertyGroup>
+
+</Project>

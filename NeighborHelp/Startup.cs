@@ -1,26 +1,40 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NeighborHelp.Services.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using NeighborHelp.Utils;
+using NeighborHelpAPI.Consts;
+using NeighborHelpChat.Hubs;
 
 namespace NeighborHelp
 {
     public class Startup
     {
+        private static string AuthenticationConfigurationArea = AuthenticationConfigurationExtention.ConfigurationArea;
+        private const string DataBaseConfigurationArea = "DataBase";
+
+        public IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-            services.AddAuthentication();
-            services.AddAuthorization();
+            services.AddControllers()
+                .AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-            services.AddSingleton(typeof(IClaimDirectoryServise,);
-            services.AddSingleton(typeof(IUserDirectoryServise,);
+            services.ConfigureAuthentication(Configuration.GetSection(AuthenticationConfigurationArea));
+            services.ConfigureDirectoryServices(Configuration.GetSection(DataBaseConfigurationArea));
+
+            services.AddSignalR(hubOptions =>
+            {
+                hubOptions.EnableDetailedErrors = true;
+                hubOptions.KeepAliveInterval = System.TimeSpan.FromMinutes(1);
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -30,6 +44,10 @@ namespace NeighborHelp
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+            app.UseHttpsRedirection();
+
             app.UseRouting();
 
             app.UseAuthentication();
@@ -37,10 +55,8 @@ namespace NeighborHelp
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>(ChatHubConsts.Path);
             });
         }
     }
