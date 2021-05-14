@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using NeighborHelp.Utils;
 using NeighborHelpAPI.Consts;
 using NeighborHelpChat.Hubs;
+using NeighborHelpWebClient.Utils;
 
 namespace NeighborHelp
 {
@@ -44,8 +45,8 @@ namespace NeighborHelp
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
+            app.UseWebClientStaticFiles(Configuration, env);
+
             app.UseHttpsRedirection();
 
             app.UseRouting();

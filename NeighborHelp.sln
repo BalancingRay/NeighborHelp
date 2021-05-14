@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InternalInfrastructureAssem
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeighborHelpInfrastructure", "NeighborHelpInfrastructure\NeighborHelpInfrastructure.csproj", "{CDBC8983-E3F8-4F8C-B84F-392E674287FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeighborHelpWebClient", "NeighborHelpWebClient\NeighborHelpWebClient.csproj", "{60B5C5B6-7473-499F-A5CC-1203255C54C8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{CDBC8983-E3F8-4F8C-B84F-392E674287FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDBC8983-E3F8-4F8C-B84F-392E674287FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDBC8983-E3F8-4F8C-B84F-392E674287FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60B5C5B6-7473-499F-A5CC-1203255C54C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60B5C5B6-7473-499F-A5CC-1203255C54C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60B5C5B6-7473-499F-A5CC-1203255C54C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60B5C5B6-7473-499F-A5CC-1203255C54C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
