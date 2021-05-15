@@ -7,9 +7,7 @@ namespace NeighborHelp.Utils
     internal static class AuthenticationConfigurationExtention
     {
         public const string ConfigurationArea = "Authentication";
-
         private const string AuthenticationTypePropertyName = "AuthenticationType";
-
         private const string TokenSection = "Tokens";
         private static readonly string TokenIssuerPath = $"{TokenSection}:Issuer";
         private static readonly string TokenKeyPath = $"{TokenSection}:Key";

@@ -4,38 +4,25 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NeighborHelp.Utils;
-using NeighborHelpAPI.Consts;
-using NeighborHelpChat.Hubs;
+using NeighborHelpChat.Utils;
 using NeighborHelpWebClient.Utils;
 
 namespace NeighborHelp
 {
     public class Startup
     {
-        private static string AuthenticationConfigurationArea = AuthenticationConfigurationExtention.ConfigurationArea;
-        private const string DataBaseConfigurationArea = "DataBase";
-
         public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers()
-                .AddNewtonsoftJson(options =>
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-
-            services.ConfigureAuthentication(Configuration.GetSection(AuthenticationConfigurationArea));
-            services.ConfigureDirectoryServices(Configuration.GetSection(DataBaseConfigurationArea));
-
-            services.AddSignalR(hubOptions =>
-            {
-                hubOptions.EnableDetailedErrors = true;
-                hubOptions.KeepAliveInterval = System.TimeSpan.FromMinutes(1);
-            });
+            string authArea = AuthenticationConfigurationExtention.ConfigurationArea;
+            string dbArea = StartupDataBaseExtention.ConfigurationArea;
+            services.ConfigureControllers();
+            services.ConfigureChatHub();
+            services.ConfigureAuthentication(Configuration.GetSection(authArea));
+            services.ConfigureDirectoryServices(Configuration.GetSection(dbArea));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -44,20 +31,15 @@ namespace NeighborHelp
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseWebClientStaticFiles(Configuration, env);
-
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<ChatHub>(ChatHubConsts.Path);
+                endpoints.MapChatHub();
             });
         }
     }

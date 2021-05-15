@@ -9,6 +9,8 @@ namespace NeighborHelp.Utils
 {
     internal static class StartupDataBaseExtention
     {
+        public const string ConfigurationArea = "DataBase";
+
         private const string InMemotyDbPropertyName = "UseInMemotyDB";
         private const string AddTestDataPropertyName = "UseTestData";
         private const string ClearDbOnStartPropertyName = "ClearDBOnStart";
@@ -18,13 +20,13 @@ namespace NeighborHelp.Utils
         {
             bool useInMemotyDB = DirectoryConfiguration.ReadBoolProperty(InMemotyDbPropertyName);
 
-            if (!useInMemotyDB)
+            if (useInMemotyDB)
             {
-                services.ConfigureMSQLDataBase(DirectoryConfiguration);
+                services.ConfigureInMemoryDataBase(DirectoryConfiguration);
             }
             else
             {
-                services.ConfigureInMemoryDataBase(DirectoryConfiguration);
+                services.ConfigureSQLDataBase(DirectoryConfiguration);
             }
             return services;
         }
@@ -45,7 +47,7 @@ namespace NeighborHelp.Utils
             }
         }
 
-        private static void ConfigureMSQLDataBase(this IServiceCollection services, IConfiguration DirectoryConfiguration)
+        private static void ConfigureSQLDataBase(this IServiceCollection services, IConfiguration DirectoryConfiguration)
         {
             bool clearDBOnStart = DirectoryConfiguration.ReadBoolProperty(ClearDbOnStartPropertyName);
             bool addTestData = DirectoryConfiguration.ReadBoolProperty(AddTestDataPropertyName);
@@ -61,7 +63,6 @@ namespace NeighborHelp.Utils
             services.AddScoped(typeof(IUserDirectoryServise),
                 (servProvider) =>
                 new EntityUserOrderDirectory(new ApplicationContext(options)));
-;
 
             if (addTestData)
             {
