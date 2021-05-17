@@ -36,7 +36,7 @@ Also there are following simple clients:
 
 ## Structure of projects:
 ### [NeighborHelpModels](https://github.com/BalancingRay/NeighborHelp/tree/master/NeighborHelpModels)
-Data Transfer Objects and their constants. Extentions to compare, modify and dublicate models. Use on both sides: clients and server.
+Data Transfer Objects and their constants. Extensions to compare, modify and dublicate models. Use on both sides: clients and server.
 ```cs
      public class Order
     {
@@ -98,7 +98,7 @@ Interfaces of services for working with models. Common utils for authorization a
     }
 ```
 ### [NeighborHelp](https://github.com/BalancingRay/NeighborHelp/tree/master/NeighborHelp)
-Initialization and registration services, dataBase and Build middlewares. Include main services implementations, extentions for building services and middlewares, controllers.
+Initialization and registration services, dataBase and Build middlewares. Include main services implementations, extensions for building services and middlewares, controllers.
 ```cs
     public class Startup
     {
@@ -108,8 +108,8 @@ Initialization and registration services, dataBase and Build middlewares. Includ
 
         public void ConfigureServices(IServiceCollection services)
         {
-            string authArea = AuthenticationConfigurationExtention.ConfigurationArea;
-            string dbArea = StartupDataBaseExtention.ConfigurationArea;
+            string authArea = AuthenticationConfigurationExtension.ConfigurationArea;
+            string dbArea = StartupDataBaseExtension.ConfigurationArea;
             services.ConfigureControllers();
             services.ConfigureChatHub();
             services.ConfigureAuthentication(Configuration.GetSection(authArea));
@@ -274,7 +274,7 @@ Initialization and registration services, dataBase and Build middlewares. Includ
         ...
 ```
 ### [NeighborHelpChat](https://github.com/BalancingRay/NeighborHelp/tree/master/NeighborHelpChat)
-ChatHub and its services. Include services registration and routing extentions for Startup method.
+ChatHub and its services. Include services registration and routing extensions for Startup method.
 ```cs
     [Authorize(AuthenticationSchemes = AuthorizeAttributeHelper.Value)]
     public class ChatHub : Hub
@@ -302,6 +302,6 @@ ChatHub and its services. Include services registration and routing extentions f
         ...
 ```
 ### [NeighborHelpWebClient](https://github.com/BalancingRay/NeighborHelp/tree/master/NeighborHelpWebClient)
-Static html files and js scripts. Include middleware registration extention.
+Static html files and js scripts. Include middleware registration extension.
 ### [NeighborHelpTests](https://github.com/BalancingRay/NeighborHelp/tree/master/NeighborHelpTests)
 Unit tests for services and controllers
